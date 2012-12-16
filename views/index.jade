@@ -1,5 +1,14 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h1 What's-iz-name
+  div.leftContainer
+    img(src="./images/#{pic}")
+  div.rightContainer Guess the name
+        ul
+          li
+            a(href="./index/?vote=a") Koala
+          li
+            a(href="./index/?vote=b") Kooala
+          li
+            a(href="./index/?vote=c") Cooala

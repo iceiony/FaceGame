@@ -2,7 +2,28 @@ body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
+   /*1 1 2 3 5 8 13 21 34 55 */
 a {
   color: #00B7FF;
+}
+
+div.leftContainer {
+    width: 55%;
+    display: inline-block;
+    float: left;
+}
+
+div.rightContainer {
+    width: 34%;
+    margin-left:8%;
+    display: inline-block;
+    float: left;
+}
+
+div img{
+    width: 100%;
+}
+
+ul {
+    list-style-type: lower-latin;
 }
