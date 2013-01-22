@@ -42,10 +42,13 @@ vows.describe('Generating a page for a specific player').addBatch({
             assert.notEqual(typeof topic.local.links, "undefined");
         },
         "the links should contain the user's name as reference": function (topic) {
-            assert(topic.local.links[0].indexOf("ionita.adri") >= 0);
+            assert(topic.local.links[0].href.indexOf("ionita.adri") >= 0);
         },
         "the link should not contain the email": function (topic) {
-            assert(topic.local.links[0].indexOf("ionita.adri@googlemail.com") < 0);
+            assert(topic.local.links[0].href.indexOf("ionita.adri@googlemail.com") < 0);
+        },
+        "the link should contain the option text": function(topic){
+            assert(topic.local.links[0].text == "Koala");
         }
     }
 }).export(module);

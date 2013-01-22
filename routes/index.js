@@ -14,8 +14,11 @@ exports.index = function (req, res) {
         length;
 
     for (i = 0, length = quizQuestion.options.length; i < length; i++) {
-        //push ( "/user/ionita.adri/vote/Koala" )
-        userLinks.push(["/user/", userName, "/vote/", quizQuestion.options[i]].join(''));
+        userLinks.push({
+          //href "/user/ionita.adri/vote/Koala"
+            href:["/user/", userName, "/vote/", quizQuestion.options[i]].join('')
+            ,text : quizQuestion.options[i]
+        });
     }
 
     res.render('index', {
