@@ -1,18 +1,19 @@
 var vows = require('vows'),
     assert = require('assert'),
     proxyquire = require('proxyquire'),
-    engineMock = {
-        generateQuestion: function () {
-            return  {
-                imageName: "randomImagePath.jpg",
-                options: ['Koala', 'Kooala', 'Cooala']
-            };
-        }
-    },
-    routes = proxyquire('../routes/index',
+
+    routeInTest = proxyquire('../routes/index',
         {'../engine/quizEngine': {
-            QuizEngine: engineMock,
-            '@noCallThru': true
+            '@noCallThru': true,
+            //the mocked object
+            QuizEngine: {
+                generateQuestion: function () {
+                    return  {
+                        imageName: "randomImagePath.jpg",
+                        options: ['Koala', 'Kooala', 'Cooala']
+                    };
+                }
+            }
         }});
 
 
@@ -29,7 +30,7 @@ vows.describe('Generating a page for a specific player').addBatch({
                         this.local = arguments[1];
                     }};
 
-            routes.index(reqMock, resMock);
+            routeInTest.index(reqMock, resMock);
             return resMock;
         },
         'should use the index view': function (topic) {
@@ -47,7 +48,7 @@ vows.describe('Generating a page for a specific player').addBatch({
         "the link should not contain the email": function (topic) {
             assert(topic.local.links[0].href.indexOf("ionita.adri@googlemail.com") < 0);
         },
-        "the link should contain the option text": function(topic){
+        "the link should contain the option text": function (topic) {
             assert(topic.local.links[0].text == "Koala");
         }
     }
