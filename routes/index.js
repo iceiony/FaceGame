@@ -23,6 +23,6 @@ exports.index = function (req, res) {
 
     res.render('index', {
         title: "FaceGame",
-        imageSrc: '../public/images/'+ quizQuestion.imageName,
+        imageSrc: '../images/'+ quizQuestion.imageName,
         links: userLinks});
 };
