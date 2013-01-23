@@ -14,22 +14,21 @@ var vows = require('vows'),
                     };
                 }
             }
-        }});
+        }})  ,
+    reqMock = {
+        body: {
+            email: "ionita.adri@googlemail.com"
+        }},
+    resMock = {
+        render: function () {
+            this.viewName = arguments[0];
+            this.local = arguments[1];
+        }};
 
 
 vows.describe('Generating a page for a specific player').addBatch({
     "when invoking the index route with the user's email": {
         topic: function () {
-            var reqMock = {
-                    body: {
-                        email: "ionita.adri@googlemail.com"
-                    }},
-                resMock = {
-                    render: function () {
-                        this.viewName = arguments[0];
-                        this.local = arguments[1];
-                    }};
-
             routeInTest.index(reqMock, resMock);
             return resMock;
         },

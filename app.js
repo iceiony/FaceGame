@@ -3,19 +3,21 @@
  * Module dependencies.
  */
 
+
 var express = require('express')
+  , app = express()
   , routes = {
         login: require('./routes/login').login,
-        index: require('./routes/index').index}
+        index: require('./routes/index').index
+    }
   , http = require('http')
   , path = require('path');
-
-var app = express();
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+
   app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
   app.use(express.logger('dev'));
   app.use(express.bodyParser());

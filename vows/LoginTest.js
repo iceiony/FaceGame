@@ -15,7 +15,6 @@ var vows = require('vows'),
 vows.describe('Generating a page for a specific player').addBatch({
     'when accessing site root with no user email': {
         topic: function () {
-            delete reqMock.body.email;
             routeInTest.login(reqMock, resMock,next);
             return resMock;
         },
