@@ -1,36 +1,32 @@
 var vows = require('vows'),
     assert = require('assert'),
     proxyquire = require('proxyquire'),
+    sinon = require('sinon'),
 
     routeInTest = proxyquire('../routes/index',
         {'../engine/quizEngine': {
             '@noCallThru': true,
-            //the mocked object
             QuizEngine: {
-                generateQuestion: function () {
-                    return  {
-                        imageName: "randomImagePath.jpg",
-                        options: ['Koala', 'Kooala', 'Cooala']
-                    };
-                }
+                generateQuestion: sinon.stub()
+                    .returns({ imageName: "randomImagePath.jpg", options: ['Koala', 'Kooala', 'Cooala'] })
             }
         }})  ,
-    reqMock = {
-        body: {
-            email: "ionita.adri@googlemail.com"
-        }},
-    resMock = {
-        render: function () {
-            this.viewName = arguments[0];
-            this.local = arguments[1];
-        }};
+    reqMock = { body: { email: "ionita.adri@googlemail.com" }},
+    resMock = { render: sinon.stub() },
+
+    makeTest = function () {
+        routeInTest.index(reqMock, resMock);
+        return {
+            viewName: resMock.render.args[0][0],
+            local: resMock.render.args[0][1]
+        };
+    };
 
 
 vows.describe('Generating a page for a specific player').addBatch({
     "when invoking the index route with the user's email": {
         topic: function () {
-            routeInTest.index(reqMock, resMock);
-            return resMock;
+            return makeTest();
         },
         'should use the index view': function (topic) {
             assert.strictEqual(topic.viewName, "index");

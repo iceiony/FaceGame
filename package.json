@@ -10,6 +10,7 @@
     "jade": "*",
 	"mongodb": "*",
     "vows": "*",
-    "proxyquire": "*"
+    "proxyquire": "*",
+    "sinon": "*"
   }
 }

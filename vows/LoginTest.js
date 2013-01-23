@@ -1,22 +1,24 @@
 var vows = require('vows'),
     assert = require('assert'),
     routeInTest = require('../routes/login'),
+    sinon = require('sinon'),
 
-    resMock = {
-        render: function () {
-            this.viewName = arguments[0];
-            this.local = arguments[1];
-        }},
+    resMock = { render: sinon.stub() },
     reqMock = {body: {}},
-    next= function () {
-            resMock.nextCalled = true;
+    next = sinon.stub(),
+
+    makeTest = function () {
+        routeInTest.login(reqMock, resMock, next);
+        return {
+            viewName: resMock.render.args[0][0],
+            local: resMock.render.args[0][1]
+        };
     };
 
 vows.describe('Generating a page for a specific player').addBatch({
     'when accessing site root with no user email': {
         topic: function () {
-            routeInTest.login(reqMock, resMock,next);
-            return resMock;
+            return makeTest();
         },
         'will be prompted to login': function (topic) {
             assert.strictEqual(topic.viewName, "login");
@@ -25,11 +27,10 @@ vows.describe('Generating a page for a specific player').addBatch({
     'when accessing the site root with a user email': {
         topic: function () {
             reqMock.body.email = "ionita.adri@googlemail.com";
-            routeInTest.login(reqMock, resMock,next);
-            return resMock;
+            return makeTest();
         },
         'the next matching route should be called': function (topic) {
-            assert.equal(topic.nextCalled, true);
+            assert.equal(next.called, true);
         }
     }
 }).export(module); // Run it
