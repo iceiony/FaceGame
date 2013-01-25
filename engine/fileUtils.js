@@ -5,8 +5,8 @@ var path = require('path'),
     crypto = require('crypto'),
     supportedExtensions = ['jpg', 'png', 'gif', 'png'],
     faceData,
-    processFile,
-    extractPersonName;
+    extractPersonName,
+    upsertRecord;
 
 extractPersonName = function (fileName) {
     //add space before all upper cases and then split the string
@@ -26,7 +26,27 @@ extractPersonName = function (fileName) {
     return fileParts.join(' ');
 }
 
-processFile = function (inputPath, callback) {
+upsertRecord = function(personName,pictureName,callback){
+
+    if(typeof faceData !== "undefined"){
+    faceData
+        .update(
+        {name: personName },
+        {$push: {pictures: pictureName}},
+        {upsert: true, w: 1},
+        function (err, result) {
+            assert.equal(null, err);
+            process.nextTick(callback);
+        });
+    }
+    else{
+        //TODO: instead of delaying , try adopting a callback pattern
+        setTimeout(upserData(personName,pictureName),10000); // delay for 10 seconds to do the insert in case db connection was not made yet
+        console.log("delaying document upsert for ("+personName+" "+pictureName+")");
+    }
+}
+
+exports.processFile = function (inputPath, callback) {
     var fileName = inputPath.substring(inputPath.lastIndexOf("/") + 1),
         fileExtension = fileName.substring(fileName.lastIndexOf("."));//extract ".jpg"
 
@@ -46,26 +66,18 @@ processFile = function (inputPath, callback) {
                 assert.equal(null, err);
 
                 //if we have any record of the face , update the known image
-                faceData
-                    .update(
-                    {name: extractPersonName(fileName)},
-                    {$push: {pictures: newFileName}},
-                    {upsert: true, w: 1},
-                    function (err, result) {
-                        assert.equal(null, err);
-                        process.nextTick(callback);
-                    });
+                upsertRecord(extractPersonName(fileName),newFileName,callback)
             });
         });
     });
 };
 
+
+//TODO: have to move te server location from here into the app setup
 new mongo.Db("FaceGame", new mongo.Server("127.0.0.1", 27017), {w: 1})
     .open(function (error, client) {
         if (error) throw error;
         faceData = new mongo.Collection(client, "FaceData");
-
-        exports.processFile = processFile;
 
     });
 
