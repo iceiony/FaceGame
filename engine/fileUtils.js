@@ -20,8 +20,8 @@ extractPersonName = function (fileName) {
     }
 
     for (i = 0, length = fileParts.length; i < fileParts.length; i += 1) {
-        //TODO: find out the super weird bug where the toUpperCase doesn't exist for fileParts[i][0] ( tests run fine though :| )
-        fileParts[i] = (fileParts[i][0] + '').toUpperCase() + fileParts[i].slice(1);
+        if( fileParts[i].length > 0 )
+        fileParts[i] = fileParts[i][0].toUpperCase() + fileParts[i].slice(1);
     }
     console.log(fileParts.join(' '));
     return fileParts.join(' ');
