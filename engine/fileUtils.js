@@ -41,7 +41,7 @@ upsertRecord = function(personName,pictureName,callback){
     }
     else{
         //TODO: instead of delaying , try adopting a callback pattern
-        setTimeout(upserData(personName,pictureName),10000); // delay for 10 seconds to do the insert in case db connection was not made yet
+        setTimeout(upsertRecord(personName,pictureName),10000); // delay for 10 seconds to do the insert in case db connection was not made yet
         console.log("delaying document upsert for ("+personName+" "+pictureName+")");
     }
 }
@@ -49,7 +49,7 @@ upsertRecord = function(personName,pictureName,callback){
 exports.processFile = function (inputPath, callback) {
     var fileName = inputPath.substring(inputPath.lastIndexOf("/") + 1),
         fileExtension = fileName.substring(fileName.lastIndexOf("."));//extract ".jpg"
-    console.log("Processing file:" + inputPath);
+    console.log("location : " + inputPath);
     //generate a new random FileName
     crypto.randomBytes(40, function (err, buf) {
         var newFileName;
