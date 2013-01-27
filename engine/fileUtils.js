@@ -23,7 +23,6 @@ extractPersonName = function (fileName) {
         if( fileParts[i].length > 0 )
         fileParts[i] = fileParts[i][0].toUpperCase() + fileParts[i].slice(1);
     }
-    console.log(fileParts.join(' '));
     return fileParts.join(' ');
 }
 
@@ -37,6 +36,7 @@ upsertRecord = function (personName, pictureName, callback) {
             {upsert: true, w: 1},
             function (err, result) {
                 assert.equal(null, err);
+                console.log("Updated "+personName);
                 if (typeof callback != "undefined") {
                     process.nextTick(callback);
                 }
