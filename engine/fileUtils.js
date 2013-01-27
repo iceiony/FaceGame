@@ -10,7 +10,7 @@ var path = require('path'),
 
 extractPersonName = function (fileName) {
     //add space before all upper cases and then split the string
-    var fileParts = fileName.replace(/([A-Z])/g, ' $1').split(/[\s\.\-_]/g),
+    var fileParts = fileName.replace(/([A-Z])/g, ' $1').trim().split(/[\s\.\-_]/g),
         hasImageExtension = supportedExtensions.indexOf(fileParts[fileParts.length - 1]) >= 0,
         i,
         length;
@@ -19,31 +19,33 @@ extractPersonName = function (fileName) {
         fileParts.pop();  // pop the extension off the back
     }
 
-    for (i = 0, length = fileParts.length; i < length; i += 1) {
-        console.log(fileParts);
-        fileParts[i] = fileParts[i][0].toUpperCase() + fileParts[i].slice(1);
+    for (i = 0, length = fileParts.length; i < fileParts.length; i += 1) {
+        //TODO: find out the super weird bug where the toUpperCase doesn't exist for fileParts[i][0] ( tests run fine though :| )
+        fileParts[i] = (fileParts[i][0] + '').toUpperCase() + fileParts[i].slice(1);
     }
-
+    console.log(fileParts.join(' '));
     return fileParts.join(' ');
 }
 
-upsertRecord = function(personName,pictureName,callback){
+upsertRecord = function (personName, pictureName, callback) {
 
-    if(typeof faceData !== "undefined"){
-    faceData
-        .update(
-        {name: personName },
-        {$push: {pictures: pictureName}},
-        {upsert: true, w: 1},
-        function (err, result) {
-            assert.equal(null, err);
-            process.nextTick(callback);
-        });
+    if (typeof faceData !== "undefined") {
+        faceData
+            .update(
+            {name: personName },
+            {$push: {pictures: pictureName}},
+            {upsert: true, w: 1},
+            function (err, result) {
+                assert.equal(null, err);
+                if (typeof callback != "undefined") {
+                    process.nextTick(callback);
+                }
+            });
     }
-    else{
+    else {
         //TODO: instead of delaying , try adopting a callback pattern
-        setTimeout(upsertRecord(personName,pictureName),10000); // delay for 10 seconds to do the insert in case db connection was not made yet
-        console.log("delaying document upsert for ("+personName+" "+pictureName+")");
+        setTimeout(upsertRecord(personName, pictureName), 10000); // delay for 10 seconds to do the insert in case db connection was not made yet
+        console.log("delaying document upsert for (" + personName + " " + pictureName + ")");
     }
 }
 
@@ -64,10 +66,11 @@ exports.processFile = function (inputPath, callback) {
 
             //delete previous location of the file
             fs.unlink(inputPath, function (err) {
+                var personName = extractPersonName(fileName);
                 assert.equal(null, err);
 
                 //if we have any record of the face , update the known image
-                upsertRecord(extractPersonName(fileName),newFileName,callback)
+                upsertRecord(personName, newFileName, callback)
             });
         });
     });
