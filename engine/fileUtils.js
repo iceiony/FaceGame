@@ -20,6 +20,7 @@ extractPersonName = function (fileName) {
     }
 
     for (i = 0, length = fileParts.length; i < length; i += 1) {
+        console.log(fileParts);
         fileParts[i] = fileParts[i][0].toUpperCase() + fileParts[i].slice(1);
     }
 
@@ -47,7 +48,7 @@ upsertRecord = function(personName,pictureName,callback){
 }
 
 exports.processFile = function (inputPath, callback) {
-    var fileName = inputPath.substring(inputPath.lastIndexOf("/") + 1),
+    var fileName = inputPath.substring(inputPath.lastIndexOf(path.sep) + 1),
         fileExtension = fileName.substring(fileName.lastIndexOf("."));//extract ".jpg"
     console.log("location : " + inputPath);
     //generate a new random FileName
