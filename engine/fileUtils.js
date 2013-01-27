@@ -49,7 +49,7 @@ upsertRecord = function(personName,pictureName,callback){
 exports.processFile = function (inputPath, callback) {
     var fileName = inputPath.substring(inputPath.lastIndexOf("/") + 1),
         fileExtension = fileName.substring(fileName.lastIndexOf("."));//extract ".jpg"
-
+    console.log("Processing file:" + inputPath);
     //generate a new random FileName
     crypto.randomBytes(40, function (err, buf) {
         var newFileName;
@@ -78,6 +78,5 @@ new mongo.Db("FaceGame", new mongo.Server("127.0.0.1", 27017), {w: 1})
     .open(function (error, client) {
         if (error) throw error;
         faceData = new mongo.Collection(client, "FaceData");
-
     });
 
