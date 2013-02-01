@@ -4,7 +4,7 @@ var vows = require('vows'),
     sinon = require('sinon'),
 
     resMock = { render: sinon.stub() },
-    reqMock = {body: {}},
+    reqMock = {body: {}, session:{} },
     next = sinon.stub(),
 
     makeTest = function () {
@@ -31,6 +31,9 @@ vows.describe('Generating a page for a specific player').addBatch({
         },
         'the next matching route should be called': function (topic) {
             assert.equal(next.called, true);
+        },
+        'the session quizQuestions queue should be created': function(topic){
+            assert(reqMock.session.quizQuestions);
         }
     }
 }).export(module); // Run it

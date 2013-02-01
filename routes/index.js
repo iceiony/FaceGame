@@ -21,6 +21,8 @@ exports.index = function (req, res) {
         });
     }
 
+    req.session.quizQuestions.push(quizQuestion);
+
     res.render('index', {
         title: "FaceGame",
         imageSrc: '../images/'+ quizQuestion.imageName,

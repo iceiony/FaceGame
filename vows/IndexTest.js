@@ -8,10 +8,14 @@ var vows = require('vows'),
             '@noCallThru': true,
             QuizEngine: {
                 generateQuestion: sinon.stub()
-                    .returns({ imageName: "randomImagePath.jpg", options: ['Koala', 'Kooala', 'Cooala'] })
+                    .returns({
+                        imageName: "randomImagePath.jpg",
+                        options: ['Koala', 'Kooala', 'Cooala'],
+                        points:{ 'Koala': 10, 'Kooala': 0, 'Cooala': -10 }
+                    })
             }
         }})  ,
-    reqMock = { body: { email: "ionita.adri@googlemail.com" }},
+    reqMock = { body: { email: "ionita.adri@googlemail.com" }, session: { quizQuestions: { push: sinon.stub() } }},
     resMock = { render: sinon.stub() },
 
     makeTest = function () {
@@ -45,6 +49,19 @@ vows.describe('Generating a page for a specific player').addBatch({
         },
         "the link should contain the option text": function (topic) {
             assert(topic.local.links[0].text == "Koala");
+        },
+        "the quiz question should be queued up in the session": function(topic){
+            assert(reqMock.session.quizQuestions.push.calledOnce);
+        },
+        "the queued question should have options": function(topic){
+            assert(reqMock.session.quizQuestions.push.args[0][0].options);
+        },
+        "the queued question should have the points received for each answer": function(topic){
+            var quizQuestion = reqMock.session.quizQuestions.push.args[0][0];
+            assert.equal(quizQuestion.points['Koala'],10);
+            assert.equal(quizQuestion.points['Kooala'],0);
+            assert.equal(quizQuestion.points['Cooala'],-10);
         }
+
     }
 }).export(module);
