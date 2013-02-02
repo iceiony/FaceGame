@@ -6,7 +6,8 @@ var path = require('path'),
     supportedExtensions = ['jpg', 'png', 'gif', 'png'],
     faceData,
     extractPersonName,
-    upsertRecord;
+    upsertRecord,
+    processFileFunction;
 
 extractPersonName = function (fileName) {
     //add space before all upper cases and then split the string
@@ -20,8 +21,8 @@ extractPersonName = function (fileName) {
     }
 
     for (i = 0, length = fileParts.length; i < fileParts.length; i += 1) {
-        if( fileParts[i].length > 0 )
-        fileParts[i] = fileParts[i][0].toUpperCase() + fileParts[i].slice(1);
+        if (fileParts[i].length > 0)
+            fileParts[i] = fileParts[i][0].toUpperCase() + fileParts[i].slice(1);
     }
     return fileParts.join(' ');
 }
@@ -36,7 +37,7 @@ upsertRecord = function (personName, pictureName, callback) {
             {upsert: true, w: 1},
             function (err, result) {
                 assert.equal(null, err);
-                console.log("Updated "+personName);
+                console.log("Updated " + personName);
                 if (typeof callback != "undefined") {
                     process.nextTick(callback);
                 }
@@ -49,7 +50,7 @@ upsertRecord = function (personName, pictureName, callback) {
     }
 }
 
-exports.processFile = function (inputPath, callback) {
+processFileFunction = function (inputPath, callback) {
     var fileName = inputPath.substring(inputPath.lastIndexOf(path.sep) + 1),
         fileExtension = fileName.substring(fileName.lastIndexOf("."));//extract ".jpg"
     console.log("location : " + inputPath);
@@ -60,7 +61,7 @@ exports.processFile = function (inputPath, callback) {
         assert.equal(null, err);
         newFileName = buf.toString('hex') + fileExtension;
 
-        //copy file across to the public/image folder
+        //copy file across to the public/image folder       s
         fs.link(inputPath, path.join("./public/images/", newFileName), function (err) {
             assert.equal(null, err);
 
@@ -76,11 +77,16 @@ exports.processFile = function (inputPath, callback) {
     });
 };
 
+module.exports = function (dbSettings) {
+    new mongo.Db("FaceGame", new mongo.Server("127.0.0.1", 27017), {w: 1})
+        .open(function (error, client) {
+            if (error) throw error;
+            faceData = new mongo.Collection(client, "FaceData");
+        });
 
-//TODO: have to move te server location from here into the app setup
-new mongo.Db("FaceGame", new mongo.Server("127.0.0.1", 27017), {w: 1})
-    .open(function (error, client) {
-        if (error) throw error;
-        faceData = new mongo.Collection(client, "FaceData");
-    });
+    return {
+        processFile : processFileFunction
+    };
+};
+
 

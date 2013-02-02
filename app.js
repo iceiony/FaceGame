@@ -17,7 +17,7 @@ var express = require('express')
     }
     , folderWatch = require('./engine/folderWatch');
 
-folderWatch.monitor(path.join(__dirname, 'input'));
+folderWatch.monitor(path.join(__dirname, 'input'),{host:mongoServerConfig.host,port:mongoServerConfig.port});
 
 
 app.configure(function () {
