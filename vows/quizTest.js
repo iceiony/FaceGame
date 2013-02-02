@@ -3,7 +3,7 @@ var vows = require('vows'),
     proxyquire = require('proxyquire'),
     sinon = require('sinon'),
 
-    routeInTest = proxyquire('../routes/index',
+    routeInTest = proxyquire('../routes/quiz',
         {'../engine/quizEngine': {
             '@noCallThru': true,
             QuizEngine: {
@@ -19,7 +19,7 @@ var vows = require('vows'),
     resMock = { render: sinon.stub() },
 
     makeTest = function () {
-        routeInTest.index(reqMock, resMock);
+        routeInTest.quiz(reqMock, resMock);
         return {
             viewName: resMock.render.args[0][0],
             local: resMock.render.args[0][1]
@@ -28,12 +28,12 @@ var vows = require('vows'),
 
 
 vows.describe('Generating a page for a specific player').addBatch({
-    "when invoking the index route with the user's email": {
+    "when invoking the index route with the user's email in the body": {
         topic: function () {
             return makeTest();
         },
-        'should use the index view': function (topic) {
-            assert.strictEqual(topic.viewName, "index");
+        'should use the quiz view': function (topic) {
+            assert.strictEqual(topic.viewName, "quiz");
         },
         'should populate the picture path': function (topic) {
             assert.notEqual(typeof topic.local.imageSrc, "undefined");
@@ -62,6 +62,5 @@ vows.describe('Generating a page for a specific player').addBatch({
             assert.equal(quizQuestion.points['Kooala'],0);
             assert.equal(quizQuestion.points['Cooala'],-10);
         }
-
     }
 }).export(module);

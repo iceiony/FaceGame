@@ -5,7 +5,7 @@ var engine = require('../engine/quizEngine'),
     path = require('path');
 
 
-exports.index = function (req, res) {
+exports.quiz = function (req, res) {
     var userEmail = req.body.email,
         userName = userEmail.substring(0, userEmail.indexOf("@")),
         quizQuestion = engine.QuizEngine.generateQuestion(),
@@ -21,9 +21,10 @@ exports.index = function (req, res) {
         });
     }
 
+    //why queue you ask ?  so that we can generate and store on client side multiple quiz questions in advance.
     req.session.quizQuestions.push(quizQuestion);
 
-    res.render('index', {
+    res.render('quiz', {
         title: "FaceGame",
         imageSrc: '../images/'+ quizQuestion.imageName,
         links: userLinks});
