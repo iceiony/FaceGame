@@ -7,7 +7,8 @@ var express = require('express')
     , app = express()
     , routes = {
         login: require('./routes/login').login,
-        quiz: require('./routes/quiz').quiz
+        quiz: require('./routes/quiz').quiz,
+        voted: require('./routes/vote').vote
     }
     , http = require('http')
     , path = require('path')
@@ -35,9 +36,9 @@ app.configure('development', function () {
     app.use(express.errorHandler());
 });
 
-
 app.all('/', routes.login);
 app.all('/', routes.quiz);
+app.all('/user/:user/vote/:voted', routes.quiz);
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log("Express server listening on port " + app.get('port'));
