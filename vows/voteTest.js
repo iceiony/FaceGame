@@ -1,11 +1,10 @@
 var vows = require('vows'),
     assert = require('assert'),
     sinon = require('sinon'),
-    proxyquire = require('proxyquire'),
+    proxyquire = require('proxyquire').noCallThru(),
 
     dependencies = {
         'mongodb': {
-            '@noCallThru': true,
             Db: function () {
                 return {
                     open: function (callback) {

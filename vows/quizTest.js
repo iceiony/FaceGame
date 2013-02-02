@@ -1,11 +1,10 @@
 var vows = require('vows'),
     assert = require('assert'),
-    proxyquire = require('proxyquire'),
+    proxyquire = require('proxyquire').noCallThru(),
     sinon = require('sinon'),
 
     routeInTest = proxyquire('../routes/quiz',
         {'../engine/quizEngine': {
-            '@noCallThru': true,
             QuizEngine: {
                 generateQuestion: sinon.stub()
                     .returns({

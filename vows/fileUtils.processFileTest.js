@@ -1,16 +1,14 @@
 var vows = require('vows'),
     assert = require('assert'),
-    proxyquire = require('proxyquire'),
+    proxyquire = require('proxyquire').noCallThru(),
     path = require('path') ,
     sinon = require('sinon'),
     dependencies = {
         'fs': {
-            '@noCallThru': true,
             unlink: sinon.stub().yields(),
             link: sinon.stub().yields()
         },
         'mongodb': {
-            '@noCallThru': true,
             Db: function () {
                 return {
                     open: function (callback) {
@@ -28,7 +26,6 @@ var vows = require('vows'),
             }
         },
         'crypto': {
-            '@noCallThru': true,
             randomBytes: function (nrBytes, callback) {
                 callback(null, 'randomSetOfBytes')
             }

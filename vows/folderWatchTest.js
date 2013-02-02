@@ -1,19 +1,16 @@
 var vows = require('vows'),
     assert = require('assert'),
     sinon = require('sinon'),
-    proxyquire = require('proxyquire'),
+    proxyquire = require('proxyquire').noCallThru(),
 
     dependencies = {
         'child_process': {
-            '@noCallThru': true,
             fork: sinon.stub().returns({})//return something that is not undefined
         } ,
         './fileUtils': {
-            '@noCallThru': true,
             processFile: sinon.spy()
         }
         ,'fs' :{
-            '@noCallThru': true,
             readdir: sinon.stub()
                 .yields(null,["readme.txt","pic1.jpg","pic2.bmp","pic3.gif","pic4.png"])
         }
