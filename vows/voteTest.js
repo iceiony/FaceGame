@@ -20,7 +20,7 @@ var vows = require('vows'),
             },
             Server: function () {
             }}},
-    routeInTest = proxyquire('../routes/vote', dependencies),
+    routeInTest = proxyquire('../routes/vote', dependencies)(sinon.mock()),  //the mock is for MongoServer
 
     reqMock = {
         session: {

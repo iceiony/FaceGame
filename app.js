@@ -5,13 +5,16 @@
 
 var express = require('express')
     , app = express()
+    , http = require('http')
+    , path = require('path')
+
+    , mongo = require('mongodb')
+    , mongoServerConfig = new mongo.Server("127.0.0.1", 27017)
     , routes = {
         login: require('./routes/login').login,
         quiz: require('./routes/quiz').quiz,
-        voted: require('./routes/vote').vote
+        voted: require('./routes/vote')(mongoServerConfig)
     }
-    , http = require('http')
-    , path = require('path')
     , folderWatch = require('./engine/folderWatch');
 
 folderWatch.monitor(path.join(__dirname, 'input'));
