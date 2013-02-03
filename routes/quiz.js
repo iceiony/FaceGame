@@ -25,6 +25,6 @@ exports.quiz = function (req, res) {
 
     res.render('quiz', {
         title: "FaceGame",
-        imageSrc: '../images/'+ quizQuestion.imageName,
+        imageSrc: quizQuestion.imageName,
         links: userLinks});
 };
