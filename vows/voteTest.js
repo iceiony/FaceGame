@@ -58,7 +58,7 @@ vows.describe('Voting in the quiz').addBatch({
 
         "the user is redirected to the quiz page with the user's name": function (topic) {
             assert(resMock.redirect.called);
-            assert.strictEqual(resMock.redirect.args[0][0], "/quiz/ionita.adri/");
+            assert.strictEqual(resMock.redirect.args[0][0], "/quiz/ionita.adri");
         },
 
         "the user's score is upserted in the db": function (topic) {

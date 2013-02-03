@@ -14,7 +14,7 @@ var vows = require('vows'),
                     })
             }
         }})  ,
-    reqMock = { body: { email: "ionita.adri@googlemail.com" }, session: { quizQuestions: { push: sinon.stub() } }},
+    reqMock = { params:{user:"ionita.adri"}, session: { quizQuestions: { push: sinon.stub() } }},
     resMock = { render: sinon.stub() },
 
     makeTest = function () {

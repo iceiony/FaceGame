@@ -48,7 +48,7 @@ app.configure('development', function () {
 });
 
 app.all('/', routes.login);
-app.all('/', routes.quiz);
+app.all('/quiz/:user', routes.quiz);
 app.all('/user/:user/vote/:voted', routes.vote);
 
 http.createServer(app).listen(app.get('port'), function () {

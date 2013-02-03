@@ -6,8 +6,7 @@ var engine = require('../engine/quizEngine'),
 
 
 exports.quiz = function (req, res) {
-    var userEmail = req.body.email,
-        userName = userEmail.substring(0, userEmail.indexOf("@")),
+    var userName= req.params.user,
         quizQuestion = engine.QuizEngine.generateQuestion(),
         userLinks = [],
         i,
