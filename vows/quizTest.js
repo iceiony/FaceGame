@@ -14,7 +14,7 @@ var vows = require('vows'),
                     })
             }
         }})  ,
-    reqMock = { params:{user:"ionita.adri"}, session: { quizQuestions: { push: sinon.stub() } }},
+    reqMock = { params:{user:"ionita.adri"}, session: { quizQuestions: { push: sinon.stub() } },headers : {}},
     resMock = { render: sinon.stub() },
 
     makeTest = function () {
@@ -60,6 +60,23 @@ vows.describe('Generating a page for a specific player').addBatch({
             assert.equal(quizQuestion.points['Koala'],10);
             assert.equal(quizQuestion.points['Kooala'],0);
             assert.equal(quizQuestion.points['Cooala'],-10);
+        }
+    }}).addBatch({
+    "when invoked by a request that accepts json": {
+        topic : function(topic){
+            reqMock.headers = { "accept":"application/json, text/javascript, */*; q=0.01" };
+            resMock.json = sinon.spy();
+            return makeTest();
+        },
+        "it should respond with a json object" : function(topic){
+            assert(resMock.json.called);
+        },
+        "it should contain the image url": function(topic){
+            assert(resMock.json.args[0][1].imageSrc);
+        },
+        "it should contain the links to vote": function(topic){
+            assert(resMock.json.args[0][1].links);
+            assert.equal(resMock.json.args[0][1].links.length,3);
         }
     }
 }).export(module);

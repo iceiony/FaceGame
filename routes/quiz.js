@@ -23,8 +23,17 @@ exports.quiz = function (req, res) {
     //why queue you ask ?  so that we can generate and store on client side multiple quiz questions in advance.
     req.session.quizQuestions.push(quizQuestion);
 
-    res.render('quiz', {
+    if(req.headers['accept'] && req.headers['accept'].indexOf('application/json') > -1 ){
+       res.json(200,{
+           imageSrc: "/images/" + quizQuestion.imageName,
+           links: userLinks
+       })
+    }
+    else{
+        res.render('quiz', {
         title: "FaceGame",
-        imageSrc: quizQuestion.imageName,
+        imageSrc: "/images/" + quizQuestion.imageName,
         links: userLinks});
+    }
 };
+
