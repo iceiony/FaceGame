@@ -3,7 +3,12 @@ exports.QuizEngine = (function () {
         generateQuestion: function () {
             return  {
                 imageName: "Koala.jpg",
-                options: ['Koala', 'Kooala', 'Cooala']
+                options: ['Koala', 'Kooala', 'Cooala'],
+                points: {
+                    'Koala' : 10,
+                    'Kooala': 0,
+                    'Cooala': -10
+                }
             };
         }
     };
