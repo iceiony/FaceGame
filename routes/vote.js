@@ -14,7 +14,7 @@ var mongo = require('mongodb'),
         function(err,callback)
         {
             assert.equal(null,err);
-            res.redirect("/quiz/"+req.params.user+"/");
+            res.redirect("/quiz/"+req.params.user);
         });
     };
 
