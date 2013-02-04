@@ -1,25 +1,12 @@
 var vows = require('vows'),
     assert = require('assert'),
     sinon = require('sinon'),
+    mockHelper = require('./helper/mockHelper'),
     proxyquire = require('proxyquire').noCallThru(),
 
     dependencies = {
-        'mongodb': {
-            Db: function () {
-                return {
-                    open: function (callback) {
-                        callback(null, {});
-                    }
-                };
-            },
-            Collection: function () {
-                dependencies.mongodb.Collection.update = sinon.stub().yields(); //save reference for assertion
-                return {
-                    update: dependencies.mongodb.Collection.update
-                };
-            },
-            Server: function () {
-            }}},
+        'mongodb': mockHelper.mongoStub({update: sinon.stub().yields()})
+    },
     routeInTest = proxyquire('../routes/vote', dependencies)(sinon.mock()),  //the mock is for MongoServer
 
     reqMock = {
@@ -35,7 +22,7 @@ var vows = require('vows'),
                 }
             ]
         },
-        params: {user: "ionita.adri" , voted: 'a'}
+        params: {user: "ionita.adri", voted: 'a'}
     },
     resMock = { redirect: sinon.stub() },
     runRoute = function () {

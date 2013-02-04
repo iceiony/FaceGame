@@ -1,5 +1,6 @@
 var vows = require('vows'),
     assert = require('assert'),
+    mockHelper = require('./helper/mockHelper'),
     proxyquire = require('proxyquire').noCallThru(),
     path = require('path') ,
     sinon = require('sinon'),
@@ -8,23 +9,9 @@ var vows = require('vows'),
             unlink: sinon.stub().yields(),
             link: sinon.stub().yields()
         },
-        'mongodb': {
-            Db: function () {
-                return {
-                    open: function (callback) {
-                        callback(null, {});
-                    }
-                };
-            },
-            Collection: function () {
-                dependencies.mongodb.Collection.update =  sinon.stub().yields(); //save reference for assertion
-                return {
-                    update: dependencies.mongodb.Collection.update
-                };
-            },
-            Server: function () {
-            }
-        },
+        'mongodb': mockHelper.mongoStub({
+            update:sinon.stub().yields()
+        }),
         'crypto': {
             randomBytes: function (nrBytes, callback) {
                 callback(null, 'randomSetOfBytes')
