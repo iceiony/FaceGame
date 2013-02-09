@@ -6,7 +6,7 @@ var engine = require('../engine/quizEngine'),
 
 
 exports.quiz = function (req, res) {
-    var userName= req.params.user,
+    var userName = req.params.user,
         quizQuestion = engine.QuizEngine.generateQuestion(),
         userLinks = [],
         i,
@@ -14,26 +14,25 @@ exports.quiz = function (req, res) {
 
     for (i = 0, length = quizQuestion.options.length; i < length; i++) {
         userLinks.push({
-          //href "/user/ionita.adri/vote/Koala"
-            href:["/user/", userName, "/vote/", quizQuestion.options[i]].join('')
-            ,text : quizQuestion.options[i]
+            //href "/user/ionita.adri/vote/Koala"
+            href: ["/user/", userName, "/vote/", quizQuestion.options[i]].join(''), text: quizQuestion.options[i]
         });
     }
 
     //why queue you ask ?  so that we can generate and store on client side multiple quiz questions in advance.
     req.session.quizQuestions.push(quizQuestion);
 
-    if(req.headers['accept'] && req.headers['accept'].indexOf('application/json') > -1 ){
-       res.json(200,{
-           imageSrc: "/images/" + quizQuestion.imageName,
-           links: userLinks
-       })
+    if (req.isJson) {
+        res.json(200, {
+            imageSrc: "/images/" + quizQuestion.imageName,
+            links: userLinks
+        })
     }
-    else{
+    else {
         res.render('quiz', {
-        title: "FaceGame",
-        imageSrc: "/images/" + quizQuestion.imageName,
-        links: userLinks});
+            title: "FaceGame",
+            imageSrc: "/images/" + quizQuestion.imageName,
+            links: userLinks});
     }
 };
 

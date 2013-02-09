@@ -18,6 +18,7 @@ var express = require('express')
     }
     , folderWatch = require('./engine/folderWatch');
 
+
 folderWatch.monitor(path.join(__dirname, 'input'), dbSettings);
 
 
@@ -38,6 +39,7 @@ app.configure(function () {
             }
         ));
 
+    app.use(require('./util/requestExtension').extendRequest);
     app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
 

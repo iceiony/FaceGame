@@ -61,7 +61,7 @@ vows.describe('Voting in the quiz').addBatch({
 }).addBatch({
         "When the request is a json one": {
             topic: function () {
-                reqMock.headers = { "accept": "application/json, text/javascript, */*; q=0.01" };
+                reqMock.isJson = true;
                 reqMock.session.quizQuestions = [
                     {
                         options: ['a', 'b', 'c'],

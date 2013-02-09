@@ -16,7 +16,7 @@ var mongo = require('mongodb'),
         {
             assert.equal(null,err);
 
-            if(req.headers['accept'] && req.headers['accept'].indexOf('application/json') > -1 ){
+            if(req.isJson){
                 res.json(200,{
                     score: record.score,
                     voteScore : quizQuestion.points[req.params.voted],

@@ -64,7 +64,7 @@ vows.describe('Generating a page for a specific player').addBatch({
     }}).addBatch({
     "when invoked by a request that accepts json": {
         topic : function(topic){
-            reqMock.headers = { "accept":"application/json, text/javascript, */*; q=0.01" };
+            reqMock.isJson = true;
             resMock.json = sinon.spy();
             return makeTest();
         },
