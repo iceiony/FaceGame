@@ -5,11 +5,12 @@ var vows = require('vows'),
     proxyquire = require('proxyquire').noCallThru(),
 
     dependencies = {
-        'mongodb': mockHelper.mongoStub({update: sinon.stub().yields()})
+        'mongodb': mockHelper.mongoStub({findAndModify: sinon.stub().yields(null, {score: 10})})
     },
     routeInTest = proxyquire('../routes/vote', dependencies)(sinon.mock()),  //the mock is for MongoServer
 
     reqMock = {
+        headers: {},
         session: {
             quizQuestions: [
                 {
@@ -49,12 +50,42 @@ vows.describe('Voting in the quiz').addBatch({
         },
 
         "the user's score is upserted in the db": function (topic) {
-            var mongoUpdate = dependencies.mongodb.Collection.update,
+            var mongoUpdate = dependencies.mongodb.Collection.findAndModify,
                 parameters = mongoUpdate.args[0];
 
             assert(mongoUpdate.called);
             assert.strictEqual(parameters[0].username, "ionita.adri");
-            assert(parameters[2].upsert);
+            assert(parameters[3].upsert);
         }
     }
-}).export(module);
+}).addBatch({
+        "When the request is a json one": {
+            topic: function () {
+                reqMock.headers = { "accept": "application/json, text/javascript, */*; q=0.01" };
+                reqMock.session.quizQuestions = [
+                    {
+                        options: ['a', 'b', 'c'],
+                        points: {'a': 1, 'b': 2, 'c': 0}
+                    }
+                ];
+                resMock.redirect.reset();
+                resMock.json = sinon.spy();
+                return runRoute();
+            },
+            'a redirect should no longer happen': function (topic) {
+                assert(!resMock.redirect.called);
+            },
+            'the response should be json': function (topic) {
+                assert(resMock.json.called);
+            },
+            'the response should contain the player score': function (topic) {
+                assert.equal(resMock.json.args[0][1].score, 10);
+            },
+            'the response should contain the latest addition to the score ': function (topic) {
+                assert.equal(resMock.json.args[0][1].voteScore, 1);
+            },
+            'the response should contain the link to generate the next quiz': function (topic) {
+                assert.strictEqual(resMock.json.args[0][1].quizLink, "/quiz/ionita.adri");
+            }
+        }
+    }).export(module);

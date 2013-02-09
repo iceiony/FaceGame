@@ -7,14 +7,25 @@ var mongo = require('mongodb'),
 
         req.session.quizQuestions = req.session.quizQuestions.slice(1); //pop it off the queue
 
-        userData.update(
+        userData.findAndModify(
             {username: req.params.user },
+            [],
             {$inc: {score: quizQuestion.points[req.params.voted]}},
             {upsert: true, w: 1},
-        function(err,callback)
+        function(err,record)
         {
             assert.equal(null,err);
-            res.redirect("/quiz/"+req.params.user);
+
+            if(req.headers['accept'] && req.headers['accept'].indexOf('application/json') > -1 ){
+                res.json(200,{
+                    score: record.score,
+                    voteScore : quizQuestion.points[req.params.voted],
+                    quizLink: "/quiz/"+req.params.user
+                })
+            }
+            else{
+                res.redirect("/quiz/"+req.params.user);
+            }
         });
     };
 
