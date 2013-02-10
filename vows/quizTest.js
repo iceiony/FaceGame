@@ -6,16 +6,17 @@ var vows = require('vows'),
 
     dependencies = {
         'mongodb': mockHelper.mongoStub({findOne: sinon.stub().yields(null, {score: 10})}),
-        '../engine/quizEngine': {
-            QuizEngine: {
+        '../engine/quizEngine': function (settings) {
+            return{
                 generateQuestion: sinon.stub()
-                    .returns({
+                    .yields(null, {
                         imageName: "randomImagePath.jpg",
                         options: ['Koala', 'Kooala', 'Cooala'],
                         points: { 'Koala': 10, 'Kooala': 0, 'Cooala': -10 }
                     })
-            }
-        }}
+            };
+        }
+    }
 routeInTest = proxyquire('../routes/quiz', dependencies)({host: 'localhost', port: 27017})
 
 makeTest = function (req, res) {
