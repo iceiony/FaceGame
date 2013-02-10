@@ -4,35 +4,38 @@ var vows = require('vows'),
     sinon = require('sinon'),
     mockHelper = require('./helper/mockHelper'),
 
-    routeInTest = proxyquire('../routes/quiz',
-        {
-           'mongodb': mockHelper.mongoStub({findOne: sinon.stub().yields(null,{score:10})}),
-            '../engine/quizEngine': {
+    dependencies = {
+        'mongodb': mockHelper.mongoStub({findOne: sinon.stub().yields(null, {score: 10})}),
+        '../engine/quizEngine': {
             QuizEngine: {
                 generateQuestion: sinon.stub()
                     .returns({
                         imageName: "randomImagePath.jpg",
                         options: ['Koala', 'Kooala', 'Cooala'],
-                        points:{ 'Koala': 10, 'Kooala': 0, 'Cooala': -10 }
+                        points: { 'Koala': 10, 'Kooala': 0, 'Cooala': -10 }
                     })
             }
-        }})({host:'localhost',port:27017})  ,
-    reqMock = { params:{user:"ionita.adri"}, session: { quizQuestions: { push: sinon.stub() } },headers : {}},
-    resMock = { render: sinon.stub() },
+        }}
+routeInTest = proxyquire('../routes/quiz', dependencies)({host: 'localhost', port: 27017})
 
-    makeTest = function () {
-        routeInTest.quiz(reqMock, resMock);
-        return {
-            viewName: resMock.render.args[0][0],
-            local: resMock.render.args[0][1]
-        };
+makeTest = function (req, res) {
+    routeInTest.quiz(req, res);
+    return {
+        viewName: res.render.args[0] ? res.render.args[0][0] : null,
+        local: res.render.args[0] ? res.render.args[0][1] : null,
+        request: req,
+        response: res
     };
+};
 
 
 vows.describe('Generating a page for a specific player').addBatch({
     "when invoking the index route with the user's email in the body": {
         topic: function () {
-            return makeTest();
+            var req = { params: {user: "ionita.adri"}, session: { quizQuestions: { push: sinon.stub() } }, headers: {}},
+                res = { render: sinon.stub() };
+
+            return makeTest(req, res);
         },
         'should use the quiz view': function (topic) {
             assert.strictEqual(topic.viewName, "quiz");
@@ -52,40 +55,43 @@ vows.describe('Generating a page for a specific player').addBatch({
         "the link should contain the option text": function (topic) {
             assert(topic.local.links[0].text == "Koala");
         },
-        "the quiz question should be queued up in the session": function(topic){
-            assert(reqMock.session.quizQuestions.push.calledOnce);
+        "the quiz question should be queued up in the session": function (topic) {
+            assert(topic.request.session.quizQuestions.push.calledOnce);
         },
-        "the queued question should have options": function(topic){
-            assert(reqMock.session.quizQuestions.push.args[0][0].options);
+        "the queued question should have options": function (topic) {
+            assert(topic.request.session.quizQuestions.push.args[0][0].options);
         },
-        "the queued question should have the points received for each answer": function(topic){
-            var quizQuestion = reqMock.session.quizQuestions.push.args[0][0];
-            assert.equal(quizQuestion.points['Koala'],10);
-            assert.equal(quizQuestion.points['Kooala'],0);
-            assert.equal(quizQuestion.points['Cooala'],-10);
+        "the queued question should have the points received for each answer": function (topic) {
+            var quizQuestion = topic.request.session.quizQuestions.push.args[0][0];
+            assert.equal(quizQuestion.points['Koala'], 10);
+            assert.equal(quizQuestion.points['Kooala'], 0);
+            assert.equal(quizQuestion.points['Cooala'], -10);
         },
-        "it should return the player's current score": function(topic){
-           assert.equal(topic.local.score,10);
+        "it should return the player's current score": function (subTopic) {
+            assert.equal(subTopic.local.score, 10);
         }
-    }}).addBatch({
+    },
     "when invoked by a request that accepts json": {
-        topic : function(topic){
-            reqMock.isJson = true;
-            resMock.json = sinon.spy();
-            return makeTest();
+        topic: function () {
+            var req = { params: {user: "ionita.adri"}, session: { quizQuestions: { push: sinon.stub() } }, headers: {}},
+                res = { render: sinon.stub() };
+            req.isJson = true;
+            res.json = sinon.spy();
+
+            return makeTest(req, res);
         },
-        "it should respond with a json object" : function(topic){
-            assert(resMock.json.called);
+        "it should respond with a json object": function (topic) {
+            assert(topic.response.json.called);
         },
-        "it should contain the image url": function(topic){
-            assert(resMock.json.args[0][1].imageSrc);
+        "it should contain the image url": function (topic) {
+            assert(topic.response.json.args[0][1].imageSrc);
         },
-        "it should contain the links to vote": function(topic){
-            assert(resMock.json.args[0][1].links);
-            assert.equal(resMock.json.args[0][1].links.length,3);
+        "it should contain the links to vote": function (topic) {
+            assert(topic.response.json.args[0][1].links);
+            assert.equal(topic.response.json.args[0][1].links.length, 3);
         },
-        "it shoudl not return the player's score": function(topic){
-            assert(!resMock.json.args[0][1].score);
+        "it shoudl not return the player's score": function (topic) {
+            assert(!topic.response.json.args[0][1].score);
         }
     }
 }).export(module);
