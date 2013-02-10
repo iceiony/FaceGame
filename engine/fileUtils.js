@@ -78,7 +78,7 @@ processFileFunction = function (inputPath, callback) {
 };
 
 module.exports = function (dbSettings) {
-    new mongo.Db("FaceGame", new mongo.Server("127.0.0.1", 27017), {w: 1})
+    new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
         .open(function (error, client) {
             if (error) throw error;
             faceData = new mongo.Collection(client, "FaceData");
