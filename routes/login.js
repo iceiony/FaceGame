@@ -8,6 +8,7 @@ exports.login = function (req, res, next) {
 
     if (typeof userEmail === 'undefined' || userEmail.length <= 0) {
         res.render('login', {title: "FaceGame Login"});
+        req.session.destroy();
     }
     else {
         userName = userEmail.substring(0, userEmail.indexOf("@"));
