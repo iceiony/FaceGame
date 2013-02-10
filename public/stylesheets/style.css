@@ -20,6 +20,10 @@ div.rightContainer {
     float: left;
 }
 
+div.score{
+    color:green;
+}
+
 div img{
     width: 100%;
 }
