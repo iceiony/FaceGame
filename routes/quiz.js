@@ -1,7 +1,9 @@
 /*
  * ALL home page.
  */
-var getQuizHandler = function (quizEngine,userData) {
+var userData,
+    quizEngine,
+    getQuizHandler = function () {
     var assert = require('assert'),
         quizHandler = function (req, res) {
             quizEngine.generateQuestion(function (err, quizQuestion) {
@@ -44,9 +46,7 @@ var getQuizHandler = function (quizEngine,userData) {
 
 var mongo = require('mongodb');
 module.exports = function (dbSettings) {
-    var userData,
-        quizEngine = require('../engine/quizEngine')(dbSettings);
-
+    quizEngine = require('../engine/quizEngine')(dbSettings);
     new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
         .open(function (error, client) {
             if (error) throw error;
@@ -54,6 +54,6 @@ module.exports = function (dbSettings) {
         });
 
     return  {
-        quiz: getQuizHandler(quizEngine,userData)
+        quiz: getQuizHandler()
     };
 }
