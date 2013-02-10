@@ -1,7 +1,10 @@
+html{ margin:0; padding:0; height:100%; width:100%; }
+
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    margin:0; padding:0; height:100%; width:100%;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+
    /*1 1 2 3 5 8 13 21 34 55 */
 a {
   color: #00B7FF;
@@ -9,15 +12,15 @@ a {
 
 div.leftContainer {
     width: 55%;
-    display: inline-block;
-    float: left;
+    height:89%;
+    float:left;
 }
 
 div.rightContainer {
     width: 34%;
     margin-left:8%;
     display: inline-block;
-    float: left;
+    float:left;
 }
 
 div.score{
@@ -25,7 +28,11 @@ div.score{
 }
 
 div img{
-    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 ul {
