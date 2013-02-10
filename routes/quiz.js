@@ -36,7 +36,7 @@ var engine = require('../engine/quizEngine'),
                 res.render('quiz', {
                     title: "FaceGame",
                     imageSrc: "/images/" + quizQuestion.imageName,
-                    score: record.score,
+                    score: record?record.score:0,
                     links: userLinks});
             });
         }
