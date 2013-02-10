@@ -6,7 +6,7 @@ runAsSeparateProcess = function () {
         path = require('path'),
         fs = require('fs'),
         uploadPath = process.env.MonitorPath,
-        dbSettings = { host: process.env.DbHost, port: process.env.DbPort}
+        dbSettings = { host: process.env.DbHost, port: parseInt(process.env.DbPort)}
         fileUtils = require('./fileUtils')(dbSettings),
         peekForProcess = function (uploadPath) {
             fs.readdir(uploadPath, function (err, files) {
