@@ -13,7 +13,7 @@ var express = require('express')
     , dbSettings = {host:"127.0.0.1", port:27017}
     , routes = {
         login: require('./routes/login').login,
-        quiz: require('./routes/quiz').quiz,
+        quiz: require('./routes/quiz')(dbSettings).quiz,
         vote: require('./routes/vote')(dbSettings).vote
     }
     , folderWatch = require('./engine/folderWatch');

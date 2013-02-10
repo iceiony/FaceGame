@@ -2,9 +2,12 @@ var vows = require('vows'),
     assert = require('assert'),
     proxyquire = require('proxyquire').noCallThru(),
     sinon = require('sinon'),
+    mockHelper = require('./helper/mockHelper'),
 
     routeInTest = proxyquire('../routes/quiz',
-        {'../engine/quizEngine': {
+        {
+           'mongodb': mockHelper.mongoStub({findOne: sinon.stub().yields(null,{score:10})}),
+            '../engine/quizEngine': {
             QuizEngine: {
                 generateQuestion: sinon.stub()
                     .returns({
@@ -13,7 +16,7 @@ var vows = require('vows'),
                         points:{ 'Koala': 10, 'Kooala': 0, 'Cooala': -10 }
                     })
             }
-        }})  ,
+        }})({host:'localhost',port:27017})  ,
     reqMock = { params:{user:"ionita.adri"}, session: { quizQuestions: { push: sinon.stub() } },headers : {}},
     resMock = { render: sinon.stub() },
 
@@ -60,6 +63,9 @@ vows.describe('Generating a page for a specific player').addBatch({
             assert.equal(quizQuestion.points['Koala'],10);
             assert.equal(quizQuestion.points['Kooala'],0);
             assert.equal(quizQuestion.points['Cooala'],-10);
+        },
+        "it should return the player's current score": function(topic){
+           assert.equal(topic.local.score,10);
         }
     }}).addBatch({
     "when invoked by a request that accepts json": {
@@ -77,6 +83,9 @@ vows.describe('Generating a page for a specific player').addBatch({
         "it should contain the links to vote": function(topic){
             assert(resMock.json.args[0][1].links);
             assert.equal(resMock.json.args[0][1].links.length,3);
+        },
+        "it shoudl not return the player's score": function(topic){
+            assert(!resMock.json.args[0][1].score);
         }
     }
 }).export(module);
