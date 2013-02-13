@@ -21,7 +21,7 @@ runAsSeparateProcess = function () {
         };
 
     peekForProcess(uploadPath);
-    setTimeout(peekForProcess, 60 * 10 * 1000, uploadPath);
+    setInterval(peekForProcess, 60 * 10 * 1000, uploadPath);
 };
 
 exports.monitor = function (uploadPath, mongoServerConfig) {

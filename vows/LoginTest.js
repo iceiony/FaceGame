@@ -18,7 +18,7 @@ var vows = require('vows'),
 vows.describe('Generating a page for a specific player').addBatch({
     'when accessing site root with no user email': {
         topic: function () {
-            reqMock = {body: {}, session:{} };
+            reqMock = {body: {}, session:{destroy:sinon.spy()} };
             return makeTest();
         },
         'will be prompted to login': function (topic) {
