@@ -72,6 +72,29 @@ vows.describe('Generating a page for a specific player').addBatch({
             assert.equal(subTopic.local.score, 10);
         }
     },
+    "when a quiz question is already queued and the request is not json": {
+        topic: function () {
+            var req = { params: {user: "ionita.adri"}, session: { quizQuestions: [
+                    {
+                        imageName: "existingImage.jpg",
+                        options: ['Koala', 'Kooala', 'Cooala'],
+                        points: { 'Koala': 10, 'Kooala': 0, 'Cooala': -10 }
+                    }
+                ] }, headers: {}},
+                res = { render: sinon.stub() };
+
+            req.session.quizQuestions.push = sinon.spy();
+            return makeTest(req, res);
+        },
+        "then it should return the first question": function(topic){
+            assert(topic.local.imageSrc.indexOf("existingImage.jpg")>=0);
+        },
+        "it should not generate a new question": function(topic){
+            assert(!topic.request.session.quizQuestions.push.called);
+
+        }
+
+    },
     "when invoked by a request that accepts json": {
         topic: function () {
             var req = { params: {user: "ionita.adri"}, session: { quizQuestions: { push: sinon.stub() } }, headers: {}},
