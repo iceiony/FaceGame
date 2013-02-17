@@ -6,7 +6,7 @@ var userData,
     quizEngine,
 
 
-    respondWith = function(req,res,quizQuestion){
+    respondWith = function (req, res, quizQuestion) {
         var userName = req.params.user,
             userLinks = [],
             i,
@@ -37,23 +37,23 @@ var userData,
         }
     },
 
-    getQuizHandler = function () {
-    var assert = require('assert'),
-        quizHandler = function (req, res) {
+    getHandler = function () {
+        var assert = require('assert'),
+            quizHandler = function (req, res) {
 
-            if(!req.isJson &&  req.session.quizQuestions.length > 0 )  {
-                respondWith(req,res,req.session.quizQuestions[0]);
-            }
-            else{
-            quizEngine.generateQuestion(function (err, quizQuestion) {
-                req.session.quizQuestions.push(quizQuestion);
-                respondWith(req,res,quizQuestion);
-            });
-            }
-        };
+                if (!req.isJson && req.session.quizQuestions.length > 0) {
+                    respondWith(req, res, req.session.quizQuestions[0]);
+                }
+                else {
+                    quizEngine.generateQuestion(function (err, quizQuestion) {
+                        req.session.quizQuestions.push(quizQuestion);
+                        respondWith(req, res, quizQuestion);
+                    });
+                }
+            };
 
-    return quizHandler;
-};
+        return quizHandler;
+    };
 
 var mongo = require('mongodb');
 module.exports = function (dbSettings) {
@@ -65,6 +65,6 @@ module.exports = function (dbSettings) {
         });
 
     return  {
-        quiz: getQuizHandler()
+        quiz: getHandler()
     };
 }

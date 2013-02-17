@@ -6,7 +6,7 @@ runAsSeparateProcess = function () {
         path = require('path'),
         fs = require('fs'),
         uploadPath = process.env.MonitorPath,
-        dbSettings = { host: process.env.DbHost, port: parseInt(process.env.DbPort)}
+        dbSettings = { host: process.env.DbHost, port: parseInt(process.env.DbPort)},
         fileUtils = require('./fileUtils')(dbSettings),
         peekForProcess = function (uploadPath) {
             fs.readdir(uploadPath, function (err, files) {
@@ -25,7 +25,7 @@ runAsSeparateProcess = function () {
 };
 
 exports.monitor = function (uploadPath, mongoServerConfig) {
-    return child_process.fork("./engine/folderWatch", [], {env: {isChildProcess: true, MonitorPath: uploadPath, DbHost: mongoServerConfig.host , DbPort: mongoServerConfig.port}});
+    return child_process.fork("./engine/folderWatch", [], {env: {isChildProcess: true, MonitorPath: uploadPath, DbHost: mongoServerConfig.host, DbPort: mongoServerConfig.port}});
 };
 
 if (typeof process.env.isChildProcess !== 'undefined' && process.env.isChildProcess) {

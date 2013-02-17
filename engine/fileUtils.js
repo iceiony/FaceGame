@@ -85,7 +85,7 @@ module.exports = function (dbSettings) {
         });
 
     return {
-        processFile : processFileFunction
+        processFile: processFileFunction
     };
 };
 

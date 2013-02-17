@@ -67,7 +67,7 @@ _generateQuestion = function (returnCallback) {
             _emitter.emit("counted", count);
         }
         else {
-            process.nextTick(function(){
+            process.nextTick(function () {
                 returnCallback({message: "DB has less than 3 records to generate a quiz"}, null);
             });
         }

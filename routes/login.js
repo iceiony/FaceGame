@@ -15,6 +15,6 @@ exports.login = function (req, res) {
         if (typeof req.session.quizQuestions === 'undefined') {
             req.session.quizQuestions = [];
         }
-        res.redirect("/quiz/"+userName+"/");
+        res.redirect("/quiz/" + userName + "/");
     }
 };
