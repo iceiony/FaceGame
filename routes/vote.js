@@ -18,7 +18,7 @@ var mongo = require('mongodb'),
 
             if(req.isJson){
                 res.json(200,{
-                    score: record.score,
+                    score: record.score + quizQuestion.points[req.params.voted],
                     voteScore : quizQuestion.points[req.params.voted],
                     quizLink: "/quiz/"+req.params.user
                 })
