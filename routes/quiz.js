@@ -46,8 +46,8 @@ var userData,
             }
             else{
             quizEngine.generateQuestion(function (err, quizQuestion) {
-                respondWith(req,res,quizQuestion);
                 req.session.quizQuestions.push(quizQuestion);
+                respondWith(req,res,quizQuestion);
             });
             }
         };
