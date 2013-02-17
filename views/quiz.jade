@@ -1,15 +1,81 @@
 extends layout
 
+block headers
+    script(src='http://code.jquery.com/jquery-1.9.1.min.js')
+
+    script(type='text/javascript')
+        $(document).ready(function(){
+        var scoreBox = $('#scoreBox'),
+            quizQuestions = [],
+            initializeHandlers = function(){
+                $('a').each(function(index,element){
+                             $(element).click(clickHandler(element));
+                         });
+             }
+            clickHandler = function(element){
+                            console.log("appending to "+element.href);
+                            return function(event){
+                                  $.ajax({
+                                      type: 'GET',
+                                      url: element.href,
+                                      dataType: 'json',
+                                      complete: function (validationResponse) {
+                                            var res = JSON.parse(validationResponse.responseText);
+                                                nextQuestion = quizQuestions[0];
+
+                                            console.log(validationResponse.responseText);
+                                            scoreBox.text("Score "+res.score);
+                                            $('img').replaceWith(nextQuestion.img);
+                                            $('ul').replaceWith(nextQuestion.ul);
+
+                                            quizQuestions = quizQuestions.splice(1);
+                                            initializeHandlers();
+                                            loadNext(res.quizLink);
+                                   }});
+
+
+                                    event.stopPropagation();
+                                    return false;
+                                };
+                    },
+            loadNext = function(quizUrl){
+               $.ajax({
+                        type: 'GET',
+                        url: quizUrl,
+                        dataType: 'json',
+                        complete: function (validationResponse) {
+                            var newQuiz = JSON.parse(validationResponse.responseText),
+                                image = $("<img/>",{src:newQuiz.imageSrc}),
+                                optionList = $("<ul/>"),
+                                i,len, option , link,ref;
+                            for(i=0,len = newQuiz.links.length;i<len;i+=1){
+                                option = $('<li/>');
+                                ref = {href: encodeURI("http://"+document.location.host+newQuiz.links[i].href)};
+                                link = $('<a/>',ref);
+
+                                link.text(newQuiz.links[i].text);
+                                link.appendTo(option);
+                                option.appendTo(optionList);
+
+                            }
+                            quizQuestions.push({img: image, ul:optionList});
+                    }});
+            };
+
+            initializeHandlers();
+            loadNext(window.location.toString());
+        });
+
 block content
     h1 What's-iz-name
     div.score
-        h1 Score #{score}
+        h1(id='scoreBox') Score #{score}
+    div#quizQustion
+        div.leftContainer
+            img(src="#{imageSrc}")
 
-    div.leftContainer
-        img(src="#{imageSrc}")
-
-    div.rightContainer Guess the name
-        ul
-            each link in links
-                li
-                    a(href="#{link.href}")= link.text
+        div.rightContainer Guess the name
+            ul
+                each link in links
+                    li
+                        a(href="#{link.href}")= link.text

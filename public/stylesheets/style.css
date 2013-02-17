@@ -25,6 +25,11 @@ div.rightContainer {
 
 }
 
+div#quizQustion{
+    width:100%;
+    height:100%;
+}
+
 div.score{
     color:green;
 }
