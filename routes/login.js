@@ -2,7 +2,7 @@
  * ALL login page
  */
 
-exports.login = function (req, res, next) {
+exports.login = function (req, res) {
     var userEmail = req.body.email,
         userName;
 
@@ -15,8 +15,6 @@ exports.login = function (req, res, next) {
         if (typeof req.session.quizQuestions === 'undefined') {
             req.session.quizQuestions = [];
         }
-
-        req.url += "quiz/"+userName+"/";
-        next();
+        res.redirect("/quiz/"+userName+"/");
     }
 };

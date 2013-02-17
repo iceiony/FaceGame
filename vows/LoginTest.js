@@ -3,7 +3,7 @@ var vows = require('vows'),
     routeInTest = require('../routes/login'),
     sinon = require('sinon'),
 
-    resMock = { render: sinon.stub() },
+    resMock = { render: sinon.stub(), redirect: sinon.stub() },
     reqMock = {body: {}, session:{} },
     next = sinon.stub(),
 
@@ -32,11 +32,9 @@ vows.describe('Generating a page for a specific player').addBatch({
             return makeTest();
         },
 
-        'the url should change for the quiz route': function (topic) {
-            assert(reqMock.url.indexOf("quiz/ionita.adri") > 0);
-        },
-        'the next matching route should be called': function (topic) {
-            assert.equal(next.called, true);
+        'the redirect to the quiz page of that user': function (topic) {
+            assert(resMock.redirect.called);
+            assert(resMock.redirect.args[0][0].indexOf("quiz/ionita.adri") > 0);
         },
         'the session quizQuestions queue should be created': function(topic){
             assert(reqMock.session.quizQuestions);
