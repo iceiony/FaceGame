@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h1 Top Scorers
+    
+    table
+        tr
+            th User
+            th Score
+        
+        each user in users
+            tr
+                td=user.username
+                td=user.score

@@ -14,7 +14,8 @@ var express = require('express')
     , routes = {
         login: require('./routes/login').login,
         quiz: require('./routes/quiz')(dbSettings).quiz,
-        vote: require('./routes/vote')(dbSettings).vote
+        vote: require('./routes/vote')(dbSettings).vote,
+        leaderboard: require('./routes/leaderboard')(dbSettings).leaderboard,
     }
     , folderWatch = require('./engine/folderWatch');
 
@@ -52,6 +53,7 @@ app.configure('development', function () {
 app.all('/', routes.login);
 app.all('/quiz/:user', routes.quiz);
 app.all('/user/:user/vote/:voted', routes.vote);
+app.all('/leaderboard', routes.leaderboard);
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log("Express server listening on port " + app.get('port'));
