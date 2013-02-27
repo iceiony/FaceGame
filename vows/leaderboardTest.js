@@ -37,6 +37,13 @@ vows.describe('Viewing the leaderboard').addBatch({
                 parameters = mongoFind.args[0];
             assert(mongoFind.called);
             assert.strictEqual(parameters[1].limit, 10);
+        },
+
+        "the score index should be ensured" : function(topic){
+            var mongoIndex = dependencies.mongodb.Collection.ensureIndex,
+                parameters = mongoIndex.args[0];
+            assert(mongoIndex.called);
+            assert.strictEqual(parameters[0], "score");
         }
     }
 }).export(module);
