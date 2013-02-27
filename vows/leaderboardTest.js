@@ -6,7 +6,7 @@ var vows = require('vows'),
 
     dependencies = {
         'mongodb': mockHelper.mongoStub({
-            find: sinon.stub().callsArgWith(2, null, [{ username: "someuser", score: 10}, null]),
+            find: sinon.stub().yields(null, [{ username: "someuser", score: 10}, null]),
             ensureIndex: sinon.stub().yields(null, "index")
         })
     },
@@ -28,14 +28,15 @@ vows.describe('Viewing the leaderboard').addBatch({
         topic: function () {
             return runRoute();
         },
-        'the leaderboard is shown': function (topic) {
+        /*'the leaderboard is shown': function (topic) {
             assert.strictEqual(topic.viewName, "leaderboard");
-        },
+        },*/
 
         "the top 10 users are retrieved from the db": function (topic) {
             var mongoFind = dependencies.mongodb.Collection.find,
                 parameters = mongoFind.args[0];
             assert(mongoFind.called);
+            assert.strictEqual(parameters[1].limit, 10);
         }
     }
 }).export(module);
