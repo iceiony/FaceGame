@@ -5,9 +5,10 @@ var vows = require('vows'),
     proxyquire = require('proxyquire').noCallThru(),
 
     dependencies = {
-        'mongodb': mockHelper.mongoStub({findAndModify: sinon.stub().yields(null, {score: 10})})
+        'mongodb': mockHelper.mongoStub({findAndModify: sinon.stub().yields(null, {score: 10})}),
+        '../util/settings': {dbSettings: sinon.mock()}
     },
-    routeInTest = proxyquire('../routes/vote', dependencies)(sinon.mock()),  //the mock is for MongoServer
+    routeInTest = proxyquire('../routes/vote', dependencies),  //the mock is for MongoServer
 
     reqMock = {
         headers: {},
@@ -78,8 +79,8 @@ vows.describe('Voting in the quiz').addBatch({
             'the response should be json': function (topic) {
                 assert(resMock.json.called);
             },
-            'the response should contain the player score': function (topic) {
-                assert.equal(resMock.json.args[0][1].score, 10);
+            'the response should contain the player current score': function (topic) {
+                assert.equal(resMock.json.args[0][1].score, 11);
             },
             'the response should contain the latest addition to the score ': function (topic) {
                 assert.equal(resMock.json.args[0][1].voteScore, 1);

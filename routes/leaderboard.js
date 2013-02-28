@@ -2,43 +2,40 @@
  * ALL leader board
  */
 
-var userData,
-    assert = require('assert'),
+var assert = require('assert')        ,
+    dbSettings = require('../util/settings').dbSettings,
+    mongo = require('mongodb'),
+    userData;
 
-    getHandler = function (req, res) {
-        var userList = [];
+exports.leaderboard = function (req, res) {
+    var userList = [];
 
-        userData.find({}, {
-            "limit": 10,
-            "sort": [['score','desc']]
-            }, function (err, records) {
-                assert.equal(null, err);
-                records.each(function(err,record){
-                    if(record == null){
-                        res.render('leaderboard', {
-                            title: "FaceGame Leaderboard",
-                            users: userList
-                        });
-                    }
-                    else{
-                        userList.push(record);
-                    }
+    userData.find({}, {
+        "limit": 10,
+        "sort": [
+            ['score', 'desc']
+        ]
+    }, function (err, records) {
+        assert.equal(null, err);
+        records.each(function (err, record) {
+            if (record == null) {
+                res.render('leaderboard', {
+                    title: "FaceGame Leaderboard",
+                    users: userList
                 });
+            }
+            else {
+                userList.push(record);
+            }
         });
-    };
+    });
+};
 
-var mongo = require('mongodb');
-module.exports = function (dbSettings) {
-    new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
-        .open(function (error, client) {
+new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
+    .open(function (error, client) {
+        if (error) throw error;
+        userData = new mongo.Collection(client, "UserData");
+        userData.ensureIndex("score", function (e, index) {
             if (error) throw error;
-            userData = new mongo.Collection(client, "UserData");
-            userData.ensureIndex("score", function(e, index){
-                if(error) throw error;
-            });
         });
-
-    return  {
-        leaderboard: getHandler
-    };
-}
+    });

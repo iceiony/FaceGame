@@ -17,13 +17,13 @@ vows.describe("Generating a quiz ").addBatch({
                         count: sinon.stub().yields(null, 1)
                     })
                 },
-                subject = proxyquire('../engine/quizEngine', dependencies)({host: "localhost", port: 123123});
+                subject = proxyquire('../engine/quizEngine', dependencies);
 
             subject.generateQuestion(this.callback);
-        }        ,
-        'should return an error message' : function(err,result){
+        },
+        'should return an error message': function (err, result) {
             assert(err);
-         }
+        }
     },
     "When generating a quiz with 3 randomly selected names": {
         topic: function () {
@@ -41,7 +41,7 @@ vows.describe("Generating a quiz ").addBatch({
                         count: sinon.stub().yields(null, 10)
                     })
                 },
-                subject = proxyquire('../engine/quizEngine', dependencies)({host: "localhost", port: 123123});
+                subject = proxyquire('../engine/quizEngine', dependencies);
 
             subject.generateQuestion(this.callback);
         },

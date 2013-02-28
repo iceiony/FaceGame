@@ -22,7 +22,7 @@ var vows = require('vows'),
     restoreConsole =  console.log;
 
 //subject in test
-    utils = proxyquire('../engine/fileUtils',dependencies)({});
+    utils = proxyquire('../engine/fileUtils',dependencies);
 
 vows.describe('processing a file located in the input folder').addBatch({
     'when an image for a new person is processed for upload': {

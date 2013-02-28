@@ -10,7 +10,7 @@ var vows = require('vows'),
             ensureIndex: sinon.stub().yields(null, "index")
         })
     },
-    routeInTest = proxyquire('../routes/leaderboard', dependencies)(sinon.mock()),  //the mock is for MongoServer
+    routeInTest = proxyquire('../routes/leaderboard', dependencies),  //the mock is for MongoServer
 
     resMock = { render: sinon.stub() },
     reqMock = {body: {}, session:{} },

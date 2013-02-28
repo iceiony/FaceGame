@@ -1,12 +1,15 @@
 /*
  * ALL home page.
  */
-var userData,
-    assert = require('assert'),
-    quizEngine,
 
+var assert = require('assert'),
+    quizEngine = require('../engine/quizEngine'),
 
-    respondWith = function (req, res, quizQuestion) {
+    dbSettings = require('../util/settings').dbSettings,
+    mongo = require('mongodb'),
+    userData,
+
+    _respondWith = function (req, res, quizQuestion) {
         var userName = req.params.user,
             userLinks = [],
             i,
@@ -35,36 +38,23 @@ var userData,
                     links: userLinks});
             });
         }
-    },
-
-    getHandler = function () {
-        var assert = require('assert'),
-            quizHandler = function (req, res) {
-
-                if (!req.isJson && req.session.quizQuestions.length > 0) {
-                    respondWith(req, res, req.session.quizQuestions[0]);
-                }
-                else {
-                    quizEngine.generateQuestion(function (err, quizQuestion) {
-                        req.session.quizQuestions.push(quizQuestion);
-                        respondWith(req, res, quizQuestion);
-                    });
-                }
-            };
-
-        return quizHandler;
     };
 
-var mongo = require('mongodb');
-module.exports = function (dbSettings) {
-    quizEngine = require('../engine/quizEngine')(dbSettings);
-    new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
-        .open(function (error, client) {
-            if (error) throw error;
-            userData = new mongo.Collection(client, "UserData");
+exports.quiz = function (req, res) {
+    if (!req.isJson && req.session.quizQuestions.length > 0) {
+        _respondWith(req, res, req.session.quizQuestions[0]);
+    }
+    else {
+        quizEngine.generateQuestion(function (err, quizQuestion) {
+            req.session.quizQuestions.push(quizQuestion);
+            _respondWith(req, res, quizQuestion);
         });
+    }
+};
 
-    return  {
-        quiz: getHandler()
-    };
-}
+
+new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
+    .open(function (error, client) {
+        if (error) throw error;
+        userData = new mongo.Collection(client, "UserData");
+    });

@@ -6,18 +6,17 @@ var vows = require('vows'),
 
     dependencies = {
         'mongodb': mockHelper.mongoStub({findOne: sinon.stub().yields(null, {score: 10})}),
-        '../engine/quizEngine': function (settings) {
-            return{
-                generateQuestion: sinon.stub()
-                    .yields(null, {
-                        imageName: "randomImagePath.jpg",
-                        options: ['Koala', 'Kooala', 'Cooala'],
-                        points: { 'Koala': 10, 'Kooala': 0, 'Cooala': -10 }
-                    })
-            };
-        }
+        '../engine/quizEngine': {
+            generateQuestion: sinon.stub()
+                .yields(null, {
+                    imageName: "randomImagePath.jpg",
+                    options: ['Koala', 'Kooala', 'Cooala'],
+                    points: { 'Koala': 10, 'Kooala': 0, 'Cooala': -10 }
+                })
+        },
+        '../util/settings': {dbSettings: {host: 'localhost', port: 27017}}
     }
-routeInTest = proxyquire('../routes/quiz', dependencies)({host: 'localhost', port: 27017})
+routeInTest = proxyquire('../routes/quiz', dependencies)
 
 makeTest = function (req, res) {
     routeInTest.quiz(req, res);
@@ -86,10 +85,10 @@ vows.describe('Generating a page for a specific player').addBatch({
             req.session.quizQuestions.push = sinon.spy();
             return makeTest(req, res);
         },
-        "then it should return the first question": function(topic){
-            assert(topic.local.imageSrc.indexOf("existingImage.jpg")>=0);
+        "then it should return the first question": function (topic) {
+            assert(topic.local.imageSrc.indexOf("existingImage.jpg") >= 0);
         },
-        "it should not generate a new question": function(topic){
+        "it should not generate a new question": function (topic) {
             assert(!topic.request.session.quizQuestions.push.called);
 
         }

@@ -2,7 +2,6 @@
  * Module dependencies.
  */
 
-
 var express = require('express')
     , app = express()
     , MongoStore = require('connect-mongo')(express)
@@ -10,17 +9,16 @@ var express = require('express')
     , path = require('path')
 
     , mongo = require('mongodb')
-    , dbSettings = {host:"127.0.0.1", port:27017}
     , routes = {
         login: require('./routes/login').login,
-        quiz: require('./routes/quiz')(dbSettings).quiz,
-        vote: require('./routes/vote')(dbSettings).vote,
-        leaderboard: require('./routes/leaderboard')(dbSettings).leaderboard,
+        quiz: require('./routes/quiz').quiz,
+        vote: require('./routes/vote').vote,
+        leaderboard: require('./routes/leaderboard').leaderboard
     }
     , folderWatch = require('./engine/folderWatch');
 
 
-folderWatch.monitor(path.join(__dirname, 'input'), dbSettings);
+folderWatch.monitor(path.join(__dirname, 'input'));
 
 
 app.configure(function () {

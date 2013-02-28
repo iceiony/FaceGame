@@ -7,11 +7,7 @@ var vows = require('vows'),
         'child_process': {
             fork: sinon.stub().returns({})//return something that is not undefined
         },
-        './fileUtils': function () {
-            var spy = sinon.spy();
-            dependencies['./fileUtils'].processFile = spy;
-            return { processFile: spy };
-        },
+        './fileUtils': { processFile: sinon.spy()},
         'fs': {
             readdir: sinon.stub()
                 .yields(null, ["readme.txt", "pic1.jpg", "pic2.bmp", "pic3.gif", "pic4.png"])
@@ -20,24 +16,24 @@ var vows = require('vows'),
 
 vows.describe("An upload folder is watched for new files to get transferred")
     .addBatch({
-    'When creating an instance of the folderWatch': {
-        topic: function () {
-            var folderWatch = proxyquire('../engine/folderWatch', dependencies);
-            return {
-                result: folderWatch.monitor("./input",{host:"localhost",port:"11123"})
-            }
+        'When creating an instance of the folderWatch': {
+            topic: function () {
+                var folderWatch = proxyquire('../engine/folderWatch', dependencies);
+                return {
+                    result: folderWatch.monitor("./input")
+                }
 
-        },
-        'the watch starts a new node process': function (topic) {
-            assert(dependencies.child_process.fork.called);
-        },
-        'it returns a reference to the child process': function (topic) {
-            assert(topic.result);
-        },
-        'it does not execute the rest of the code': function (topic) {
-            assert(!dependencies['./fileUtils'].processFile);
-        }}
-})
+            },
+            'the watch starts a new node process': function (topic) {
+                assert(dependencies.child_process.fork.called);
+            },
+            'it returns a reference to the child process': function (topic) {
+                assert(topic.result);
+            },
+            'it does not execute the rest of the code': function (topic) {
+                assert(!dependencies['./fileUtils'].processFile.called);
+            }}
+    })
     .addBatch({
         'When executing the code as a child process': {
             topic: function () {

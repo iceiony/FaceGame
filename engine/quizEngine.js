@@ -1,19 +1,17 @@
-var mongo = require('mongodb'),
+var dbSettings = require("../util/settings").dbSettings,
+    mongo = require('mongodb'),
     assert = require('assert'),
     EventEmitter = require('events').EventEmitter,
     faceData,
 
-    _getRandomDocument,
-    _generateQuestion;
+    _getRandomDocument = function (count, callback) {
+        var randomNr = Math.floor(count * Math.random());
+        faceData.findOne({}, {limit: -1, skip: randomNr}, function (err, doc) {
+            callback(err, doc);
+        });
+    };
 
-_getRandomDocument = function (count, callback) {
-    var randomNr = Math.floor(count * Math.random());
-    faceData.findOne({}, {limit: -1, skip: randomNr}, function (err, doc) {
-        callback(err, doc);
-    });
-};
-
-_generateQuestion = function (returnCallback) {
+exports.generateQuestion = function (returnCallback) {
     var _emitter = new EventEmitter(),
         _select3Records = function (count) {
             var records = [],
@@ -74,14 +72,9 @@ _generateQuestion = function (returnCallback) {
     });
 };
 
-module.exports = function (dbSettings) {
-    new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
-        .open(function (error, client) {
-            if (error) throw error;
-            faceData = new mongo.Collection(client, "FaceData");
-        });
 
-    return {
-        generateQuestion: _generateQuestion
-    };
-};
+new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
+    .open(function (error, client) {
+        if (error) throw error;
+        faceData = new mongo.Collection(client, "FaceData");
+    });
