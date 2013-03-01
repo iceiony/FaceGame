@@ -1,85 +1,86 @@
-var path = require('path'),
-    assert = require('assert'),
-    fs = require('fs'),
+var path = require ( 'path' ),
+    assert = require ( 'assert' ),
+    fs = require ( 'fs' ),
 
-    dbSettings = require('../util/settings').dbSettings,
-    mongo = require('mongodb'),
-    crypto = require('crypto'),
+    dbSettings = require ( '../util/settings' ).dbSettings,
+    mongo = require ( 'mongodb' ),
+    crypto = require ( 'crypto' ),
     supportedExtensions = ['jpg', 'png', 'gif', 'png'],
     faceData,
     _extractPersonName,
     _upsertRecord;
 
-_extractPersonName = function (fileName) {
+_extractPersonName = function ( fileName ) {
     //add space before all upper cases and then split the string
-    var fileParts = fileName.replace(/([A-Z])/g, ' $1').trim().split(/[\s\.\-_]/g),
-        hasImageExtension = supportedExtensions.indexOf(fileParts[fileParts.length - 1]) >= 0,
+    var fileParts = fileName.replace ( /([A-Z])/g , ' $1' ).trim ().split ( /[\s\.\-_]/g ),
+        hasImageExtension = supportedExtensions.indexOf ( fileParts[fileParts.length - 1] ) >= 0,
         i,
         length;
 
-    if (hasImageExtension) {
-        fileParts.pop();  // pop the extension off the back
+    if ( hasImageExtension ) {
+        fileParts.pop ();  // pop the extension off the back
     }
 
-    for (i = 0, length = fileParts.length; i < fileParts.length; i += 1) {
-        if (fileParts[i].length > 0)
-            fileParts[i] = fileParts[i][0].toUpperCase() + fileParts[i].slice(1);
+    for ( i = 0, length = fileParts.length ; i < fileParts.length ; i += 1 ) {
+        if ( fileParts[i].length > 0 ) {
+            fileParts[i] = fileParts[i][0].toUpperCase () + fileParts[i].slice ( 1 );
+        }
     }
-    return fileParts.join(' ');
+    return fileParts.join ( ' ' );
 }
 
-_upsertRecord = function (personName, pictureName, callback) {
+_upsertRecord = function ( personName , pictureName , callback ) {
 
-    if (typeof faceData !== "undefined") {
+    if ( typeof faceData !== "undefined" ) {
         faceData
-            .update(
-            {name: personName },
-            {$push: {pictures: pictureName}},
-            {upsert: true, w: 1},
-            function (err, result) {
-                assert.equal(null, err);
-                console.log("Updated " + personName);
-                if (typeof callback != "undefined") {
-                    process.nextTick(callback);
+            .update (
+            {name : personName } ,
+            {$push : {pictures : pictureName}} ,
+            {upsert : true , w : 1} ,
+            function ( err , result ) {
+                assert.equal ( null , err );
+                console.log ( "Updated " + personName );
+                if ( typeof callback != "undefined" ) {
+                    process.nextTick ( callback );
                 }
-            });
+            } );
     }
     else {
         //TODO: instead of delaying , try adopting a callback pattern
-        setTimeout(_upsertRecord(personName, pictureName), 10000); // delay for 10 seconds to do the insert in case db connection was not made yet
-        console.log("delaying document upsert for (" + personName + " " + pictureName + ")");
+        setTimeout ( _upsertRecord ( personName , pictureName ) , 10000 ); // delay for 10 seconds to do the insert in case db connection was not made yet
+        console.log ( "delaying document upsert for (" + personName + " " + pictureName + ")" );
     }
 }
 
-exports.processFile = function (inputPath, callback) {
-    var fileName = inputPath.substring(inputPath.lastIndexOf(path.sep) + 1),
-        fileExtension = fileName.substring(fileName.lastIndexOf("."));//extract ".jpg"
-    console.log("location : " + inputPath);
+exports.processFile = function ( inputPath , callback ) {
+    var fileName = inputPath.substring ( inputPath.lastIndexOf ( path.sep ) + 1 ),
+        fileExtension = fileName.substring ( fileName.lastIndexOf ( "." ) );//extract ".jpg"
+    console.log ( "location : " + inputPath );
     //generate a new random FileName
-    crypto.randomBytes(40, function (err, buf) {
+    crypto.randomBytes ( 40 , function ( err , buf ) {
         var newFileName;
 
-        assert.equal(null, err);
-        newFileName = buf.toString('hex') + fileExtension;
+        assert.equal ( null , err );
+        newFileName = buf.toString ( 'hex' ) + fileExtension;
 
         //copy file across to the public/image folder       s
-        fs.link(inputPath, path.join("./public/images/", newFileName), function (err) {
-            assert.equal(null, err);
+        fs.link ( inputPath , path.join ( "./public/images/" , newFileName ) , function ( err ) {
+            assert.equal ( null , err );
 
             //delete previous location of the file
-            fs.unlink(inputPath, function (err) {
-                var personName = _extractPersonName(fileName);
-                assert.equal(null, err);
+            fs.unlink ( inputPath , function ( err ) {
+                var personName = _extractPersonName ( fileName );
+                assert.equal ( null , err );
 
                 //if we have any record of the face , update the known image
-                _upsertRecord(personName, newFileName, callback)
-            });
-        });
-    });
+                _upsertRecord ( personName , newFileName , callback )
+            } );
+        } );
+    } );
 };
 
-new mongo.Db("FaceGame", new mongo.Server(dbSettings.host, dbSettings.port), {w: 1})
-    .open(function (error, client) {
-        if (error) throw error;
-        faceData = new mongo.Collection(client, "FaceData");
-    });
+new mongo.Db ( "FaceGame" , new mongo.Server ( dbSettings.host , dbSettings.port ) , {w : 1} )
+    .open ( function ( error , client ) {
+    if ( error ) throw error;
+    faceData = new mongo.Collection ( client , "FaceData" );
+} );
