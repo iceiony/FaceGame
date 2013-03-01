@@ -1,6 +1,6 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
-    subject = require ( '../util/requestExtension' ).extendRequest,
+    subject = require ( '../util/request-extension' ).extendRequest,
     reqJson = {headers : { "accept" : "application/json, text/javascript, */*; q=0.01" }};
 reqNonJson = {headers : { "accept" : "text/html, text/javascript, */*; q=0.01" }};
 

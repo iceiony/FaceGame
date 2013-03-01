@@ -1,7 +1,7 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
     sinon = require ( 'sinon' ),
-    mockHelper = require ( './helper/mockHelper' ),
+    mockHelper = require ( './helper/mock-helper' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
 
     dependencies = {

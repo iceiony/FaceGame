@@ -15,7 +15,7 @@ var express = require ( 'express' )
         vote        : require ( './routes/vote' ).vote ,
         leaderboard : require ( './routes/leaderboard' ).leaderboard
     }
-    , folderWatch = require ( './engine/folderWatch' );
+    , folderWatch = require ( './engine/folder-watch' );
 
 
 folderWatch.monitor ( path.join ( __dirname , 'input' ) );
@@ -38,7 +38,7 @@ app.configure ( function () {
         }
     ) );
 
-    app.use ( require ( './util/requestExtension' ).extendRequest );
+    app.use ( require ( './util/request-extension' ).extendRequest );
     app.use ( app.router );
     app.use ( express.static ( path.join ( __dirname , 'public' ) ) );
 

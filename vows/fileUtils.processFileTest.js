@@ -1,6 +1,6 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
-    mockHelper = require ( './helper/mockHelper' ),
+    mockHelper = require ( './helper/mock-helper' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
     path = require ( 'path' ) ,
     sinon = require ( 'sinon' ),
@@ -20,7 +20,7 @@ var vows = require ( 'vows' ),
     restoreConsole = console.log;
 
 //subject in test
-utils = proxyquire ( '../engine/fileUtils' , dependencies );
+utils = proxyquire ( '../engine/file-processing' , dependencies );
 
 vows.describe ( 'processing a file located in the input folder' ).addBatch ( {
     'when an image for a new person is processed for upload' : {

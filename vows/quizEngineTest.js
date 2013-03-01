@@ -2,22 +2,22 @@ var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
     sinon = require ( 'sinon' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
-    mockHelper = require ( './helper/mockHelper' );
+    mockHelper = require ( './helper/mock-helper' );
 
 
 vows.describe ( "Generating a quiz " ).addBatch ( {
     "When generating a quiz with 3 names but not enough data in the db" : {
         topic                            : function () {
-            var recordGenerator = function ( query , options , callback ) {
+            var generateRecord = function ( query , options , callback ) {
                     callback ( null , {name : "Badger" , pictures : ["Badger.jpg"]} )
                 },
                 dependencies = {
                     'mongodb' : mockHelper.mongoStub ( {
-                        findOne : recordGenerator ,
+                        findOne : generateRecord ,
                         count   : sinon.stub ().yields ( null , 1 )
                     } )
                 },
-                subject = proxyquire ( '../engine/quizEngine' , dependencies );
+                subject = proxyquire ( '../engine/quiz-engine' , dependencies );
 
             subject.generateQuestion ( this.callback );
         } ,
@@ -41,7 +41,7 @@ vows.describe ( "Generating a quiz " ).addBatch ( {
                         count   : sinon.stub ().yields ( null , 10 )
                     } )
                 },
-                subject = proxyquire ( '../engine/quizEngine' , dependencies );
+                subject = proxyquire ( '../engine/quiz-engine' , dependencies );
 
             subject.generateQuestion ( this.callback );
         } ,

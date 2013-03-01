@@ -58,8 +58,11 @@ var dbSettings = require ( "../util/settings" ).dbSettings,
         }
     };
 
-exports.generateQuestion = function ( returnCallback ) {
+exports.generateQuestion = function ( callback ) {
     var _emitter = new EventEmitter ();
+
+    _emitter.on ( "counted" , _select3Records ( _emitter ) );
+    _emitter.on ( "dbDataRetrieved" , _makeQuizFromRecords ( callback ) );
 
     faceData.count ( function ( err , count ) {
         if ( count >= 3 ) {
@@ -67,13 +70,10 @@ exports.generateQuestion = function ( returnCallback ) {
         }
         else {
             process.nextTick ( function () {
-                returnCallback ( {message : "DB has less than 3 records to generate a quiz"} , null );
+                callback ( {message : "DB has less than 3 records to generate a quiz"} , null );
             } );
         }
     } );
-
-    _emitter.on ( "counted" , _select3Records ( _emitter ) );
-    _emitter.on ( "dbDataRetrieved" , _makeQuizFromRecords ( returnCallback ) );
 };
 
 

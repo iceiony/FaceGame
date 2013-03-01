@@ -3,7 +3,7 @@
  */
 
 var assert = require ( 'assert' ),
-    quizEngine = require ( '../engine/quizEngine' ),
+    quizEngine = require ( '../engine/quiz-engine' ),
 
     dbSettings = require ( '../util/settings' ).dbSettings,
     mongo = require ( 'mongodb' ),

@@ -7,7 +7,7 @@ var vows = require ( 'vows' ),
         'child_process' : {
             fork : sinon.stub ().returns ( {} )//return something that is not undefined
         } ,
-        './fileUtils'   : { processFile : sinon.spy ()} ,
+        './file-processing'   : { processFile : sinon.spy ()} ,
         'fs'            : {
             readdir : sinon.stub ()
                 .yields ( null , ["readme.txt", "pic1.jpg", "pic2.bmp", "pic3.gif", "pic4.png"] )
@@ -16,9 +16,9 @@ var vows = require ( 'vows' ),
 
 vows.describe ( "An upload folder is watched for new files to get transferred" )
     .addBatch ( {
-        'When creating an instance of the folderWatch' : {
+        'When creating an instance of the folder-watch' : {
             topic                                         : function () {
-                var folderWatch = proxyquire ( '../engine/folderWatch' , dependencies );
+                var folderWatch = proxyquire ( '../engine/folder-watch' , dependencies );
                 return {
                     result : folderWatch.monitor ( "./input" )
                 }
@@ -31,7 +31,7 @@ vows.describe ( "An upload folder is watched for new files to get transferred" )
                 assert ( topic.result );
             } ,
             'it does not execute the rest of the code'    : function ( topic ) {
-                assert ( ! dependencies['./fileUtils'].processFile.called );
+                assert ( ! dependencies['./file-processing'].processFile.called );
             }}
     } )
     .addBatch ( {
@@ -45,7 +45,7 @@ vows.describe ( "An upload folder is watched for new files to get transferred" )
 
                 process.env.IsChildProcess = true;
                 process.env.MonitorPath = "../input";
-                var folderWatch = proxyquire ( '../engine/folderWatch' , dependencies );
+                var folderWatch = proxyquire ( '../engine/folder-watch' , dependencies );
 
                 return {
                     clock      : clock ,
@@ -53,16 +53,16 @@ vows.describe ( "An upload folder is watched for new files to get transferred" )
                 };
             } ,
             'it should process a total of 3 images only'      : function ( topic ) {
-                assert ( dependencies['./fileUtils'].processFile.calledThrice );
+                assert ( dependencies['./file-processing'].processFile.calledThrice );
             } ,
             'it will process all jpg files in the given path' : function ( topic ) {
-                assert ( dependencies['./fileUtils'].processFile.args[0][0].indexOf ( 'pic1.jpg' ) >= 0 );
+                assert ( dependencies['./file-processing'].processFile.args[0][0].indexOf ( 'pic1.jpg' ) >= 0 );
             } ,
             'it will process all gif files in the given path' : function ( topic ) {
-                assert ( dependencies['./fileUtils'].processFile.args[1][0].indexOf ( 'pic3.gif' ) >= 0 );
+                assert ( dependencies['./file-processing'].processFile.args[1][0].indexOf ( 'pic3.gif' ) >= 0 );
             } ,
             'it will process all png files in the given path' : function ( topic ) {
-                assert ( dependencies['./fileUtils'].processFile.args[2][0].indexOf ( 'pic4.png' ) >= 0 );
+                assert ( dependencies['./file-processing'].processFile.args[2][0].indexOf ( 'pic4.png' ) >= 0 );
             } ,
             'it will peek for new files every 10 minutes'     : function ( topic ) {
 

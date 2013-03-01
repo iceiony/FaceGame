@@ -2,11 +2,11 @@ var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
     sinon = require ( 'sinon' ),
-    mockHelper = require ( './helper/mockHelper' ),
+    mockHelper = require ( './helper/mock-helper' ),
 
     dependencies = {
         'mongodb'              : mockHelper.mongoStub ( {findOne : sinon.stub ().yields ( null , {score : 10} )} ) ,
-        '../engine/quizEngine' : {
+        '../engine/quiz-engine' : {
             generateQuestion : sinon.stub ()
                 .yields ( null , {
                     imageName : "randomImagePath.jpg" ,
