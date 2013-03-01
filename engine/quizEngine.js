@@ -9,11 +9,9 @@ var dbSettings = require("../util/settings").dbSettings,
         faceData.findOne({}, {limit: -1, skip: randomNr}, function (err, doc) {
             callback(err, doc);
         });
-    };
-
-exports.generateQuestion = function (returnCallback) {
-    var _emitter = new EventEmitter(),
-        _select3Records = function (count) {
+    },
+    _select3Records = function (_emitter) {
+        return function (count) {
             var records = [],
                 names = [],
                 _recordUniqueDoc = function (doc) {
@@ -38,8 +36,10 @@ exports.generateQuestion = function (returnCallback) {
                 _emitter.emit("documentRetrieved", doc)
             });
 
-        },
-        _makeQuizFromRecords = function (records) {
+        };
+    },
+    _makeQuizFromRecords = function (returnCallback) {
+        return function (records) {
             var randomIndex = Math.floor(records.length * Math.random()),
                 randomPictureIndex = Math.floor(records[randomIndex].pictures.length * Math.random()),
                 quizQuestion = {
@@ -55,10 +55,11 @@ exports.generateQuestion = function (returnCallback) {
             quizQuestion.points[records[randomIndex].name] = 10;
 
             returnCallback(null, quizQuestion);
-        };
+        }
+    };
 
-    _emitter.on("counted", _select3Records);
-    _emitter.on("dbDataRetrieved", _makeQuizFromRecords);
+exports.generateQuestion = function (returnCallback) {
+    var _emitter = new EventEmitter();
 
     faceData.count(function (err, count) {
         if (count >= 3) {
@@ -70,6 +71,9 @@ exports.generateQuestion = function (returnCallback) {
             });
         }
     });
+
+    _emitter.on("counted", _select3Records(_emitter));
+    _emitter.on("dbDataRetrieved", _makeQuizFromRecords(returnCallback));
 };
 
 
