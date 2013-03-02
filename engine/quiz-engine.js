@@ -61,9 +61,6 @@ var dbSettings = require ( "../util/settings" ).dbSettings,
 exports.generateQuestion = function ( callback ) {
     var _emitter = new EventEmitter ();
 
-    _emitter.on ( "counted" , _select3Records ( _emitter ) );
-    _emitter.on ( "dbDataRetrieved" , _makeQuizFromRecords ( callback ) );
-
     faceData.count ( function ( err , count ) {
         if ( count >= 3 ) {
             _emitter.emit ( "counted" , count );
@@ -74,6 +71,10 @@ exports.generateQuestion = function ( callback ) {
             } );
         }
     } );
+
+    _emitter.on ( "counted" , _select3Records ( _emitter ) );
+    _emitter.on ( "dbDataRetrieved" , _makeQuizFromRecords ( callback ) );
+
 };
 
 
