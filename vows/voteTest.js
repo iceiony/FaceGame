@@ -60,33 +60,33 @@ vows.describe ( 'Voting in the quiz' ).addBatch ( {
         }
     }
 } ).addBatch ( {
-        "When the request is a json one" : {
-            topic                                                            : function () {
-                reqMock.isJson = true;
-                reqMock.session.quizQuestions = [
-                    {
-                        options : ['a', 'b', 'c'] ,
-                        points  : {'a' : 1 , 'b' : 2 , 'c' : 0}
-                    }
-                ];
-                resMock.redirect.reset ();
-                resMock.json = sinon.spy ();
-                return runRoute ();
-            } ,
-            'a redirect should no longer happen'                             : function ( topic ) {
-                assert ( ! resMock.redirect.called );
-            } ,
-            'the response should be json'                                    : function ( topic ) {
-                assert ( resMock.json.called );
-            } ,
-            'the response should contain the player current score'           : function ( topic ) {
-                assert.equal ( resMock.json.args[0][1].score , 11 );
-            } ,
-            'the response should contain the latest addition to the score '  : function ( topic ) {
-                assert.equal ( resMock.json.args[0][1].voteScore , 1 );
-            } ,
-            'the response should contain the link to generate the next quiz' : function ( topic ) {
-                assert.strictEqual ( resMock.json.args[0][1].quizLink , "/quiz/ionita.adri" );
-            }
+    "When the request is a json one" : {
+        topic                                                            : function () {
+            reqMock.isJson = true;
+            reqMock.session.quizQuestions = [
+                {
+                    options : ['a', 'b', 'c'] ,
+                    points  : {'a' : 1 , 'b' : 2 , 'c' : 0}
+                }
+            ];
+            resMock.redirect.reset ();
+            resMock.json = sinon.spy ();
+            return runRoute ();
+        } ,
+        'a redirect should no longer happen'                             : function ( topic ) {
+            assert ( ! resMock.redirect.called );
+        } ,
+        'the response should be json'                                    : function ( topic ) {
+            assert ( resMock.json.called );
+        } ,
+        'the response should contain the player current score'           : function ( topic ) {
+            assert.equal ( resMock.json.args[0][1].score , 11 );
+        } ,
+        'the response should contain the latest addition to the score '  : function ( topic ) {
+            assert.equal ( resMock.json.args[0][1].voteScore , 1 );
+        } ,
+        'the response should contain the link to generate the next quiz' : function ( topic ) {
+            assert.strictEqual ( resMock.json.args[0][1].quizLink , "/quiz/ionita.adri" );
         }
-    } ).export ( module );
+    }
+} ).export ( module );

@@ -25,19 +25,19 @@ vows.describe ( 'Generating a page for a specific player' ).addBatch ( {
             assert.strictEqual ( topic.viewName , "login" );
         }
     }} ).addBatch ( {
-        'when accessing the site root with a user email' : {
-            topic : function () {
-                reqMock.body.email = "ionita.adri@googlemail.com";
-                reqMock.URL = "http://localhost:3000/";
-                return makeTest ();
-            } ,
+    'when accessing the site root with a user email' : {
+        topic : function () {
+            reqMock.body.email = "ionita.adri@googlemail.com";
+            reqMock.URL = "http://localhost:3000/";
+            return makeTest ();
+        } ,
 
-            'the redirect to the quiz page of that user'        : function ( topic ) {
-                assert ( resMock.redirect.called );
-                assert ( resMock.redirect.args[0][0].indexOf ( "quiz/ionita.adri" ) > 0 );
-            } ,
-            'the session quizQuestions queue should be created' : function ( topic ) {
-                assert ( reqMock.session.quizQuestions );
-            }
+        'the redirect to the quiz page of that user'        : function ( topic ) {
+            assert ( resMock.redirect.called );
+            assert ( resMock.redirect.args[0][0].indexOf ( "quiz/ionita.adri" ) > 0 );
+        } ,
+        'the session quizQuestions queue should be created' : function ( topic ) {
+            assert ( reqMock.session.quizQuestions );
         }
-    } ).export ( module ); // Run it
+    }
+} ).export ( module ); // Run it

@@ -5,16 +5,16 @@ var vows = require ( 'vows' ),
     mockHelper = require ( './helper/mock-helper' ),
 
     dependencies = {
-        'mongodb'              : mockHelper.mongoStub ( {findOne : sinon.stub ().yields ( null , {score : 10} )} ) ,
+        'mongodb'               : mockHelper.mongoStub ( {findOne : sinon.stub ().yields ( null , {score : 10} )} ) ,
         '../engine/quiz-engine' : {
             generateQuestion : sinon.stub ()
                 .yields ( null , {
-                    imageName : "randomImagePath.jpg" ,
-                    options   : ['Koala', 'Kooala', 'Cooala'] ,
-                    points    : { 'Koala' : 10 , 'Kooala' : 0 , 'Cooala' : - 10 }
-                } )
+                imageName : "randomImagePath.jpg" ,
+                options   : ['Koala', 'Kooala', 'Cooala'] ,
+                points    : { 'Koala' : 10 , 'Kooala' : 0 , 'Cooala' : - 10 }
+            } )
         } ,
-        '../util/settings'     : {dbSettings : {host : 'localhost' , port : 27017}}
+        '../util/settings'      : {dbSettings : {host : 'localhost' , port : 27017}}
     }
 routeInTest = proxyquire ( '../routes/quiz' , dependencies )
 
