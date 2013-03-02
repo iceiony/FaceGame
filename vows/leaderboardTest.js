@@ -6,10 +6,12 @@ var vows = require ( 'vows' ),
 
     dependencies = {
         'mongodb' : mockHelper.mongoStub ( {
-            find        : sinon.stub ().yields ( null , [
-                { username : "someuser" , score : 10},
-                null
-            ] ) ,
+            find        : sinon.stub ().yields ( null
+                , mockHelper.cursorStub ( [
+                    { username : "someuser" , score : 10},
+                    null
+                ] )
+            ) ,
             ensureIndex : sinon.stub ().yields ( null , "index" )
         } )
     },

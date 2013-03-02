@@ -21,3 +21,14 @@ exports.mongoStub = function ( mocks ) {
         };
     return stub;
 }
+
+exports.cursorStub = function ( mockRecords ) {
+    mockRecords.each = function ( callback ) {
+        var simpleCallback = function ( value ) {
+            return callback ( null , value );
+        };
+        return mockRecords.forEach.call ( mockRecords , simpleCallback );
+    };
+
+    return mockRecords;
+}
