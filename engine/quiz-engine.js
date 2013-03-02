@@ -10,7 +10,7 @@ var dbSettings = require ( "../util/settings" ).dbSettings,
             callback ( err , doc );
         } );
     },
-    _select3Records = function ( _emitter ) {
+    _select3Records = function ( emitter ) {
         return function ( count ) {
             var records = [],
                 names = [],
@@ -22,18 +22,18 @@ var dbSettings = require ( "../util/settings" ).dbSettings,
 
                     if ( records.length < 3 ) {
                         _getRandomDocument ( count , function ( err , doc ) {
-                            _emitter.emit ( "documentRetrieved" , doc );
+                            emitter.emit ( "documentRetrieved" , doc );
                         } );
                     }
                     else {
-                        _emitter.emit ( "dbDataRetrieved" , records );
+                        emitter.emit ( "dbDataRetrieved" , records );
                     }
                 };
 
-            _emitter.on ( "documentRetrieved" , _recordUniqueDoc );
+            emitter.on ( "documentRetrieved" , _recordUniqueDoc );
 
             _getRandomDocument ( count , function ( err , doc ) {
-                _emitter.emit ( "documentRetrieved" , doc )
+                emitter.emit ( "documentRetrieved" , doc )
             } );
 
         };

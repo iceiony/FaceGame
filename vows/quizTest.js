@@ -21,8 +21,8 @@ routeInTest = proxyquire ( '../routes/quiz' , dependencies )
 makeTest = function ( req , res ) {
     routeInTest.quiz ( req , res );
     return {
-        viewName : res.render.args[0] ? res.render.args[0][0] : null ,
-        local    : res.render.args[0] ? res.render.args[0][1] : null ,
+        viewName : function () {return res.render.args[0] ? res.render.args[0][0] : null} ,
+        local    : function () {return res.render.args[0] ? res.render.args[0][1] : null} ,
         request  : req ,
         response : res
     };
@@ -38,22 +38,22 @@ vows.describe ( 'Generating a page for a specific player' ).addBatch ( {
             return makeTest ( req , res );
         } ,
         'should use the quiz view'                                            : function ( topic ) {
-            assert.strictEqual ( topic.viewName , "quiz" );
+            assert.strictEqual ( topic.viewName () , "quiz" );
         } ,
         'should populate the picture path'                                    : function ( topic ) {
-            assert.notEqual ( typeof topic.local.imageSrc , "undefined" );
+            assert.notEqual ( typeof topic.local ().imageSrc , "undefined" );
         } ,
         "should generate the response option links"                           : function ( topic ) {
-            assert.notEqual ( typeof topic.local.links , "undefined" );
+            assert.notEqual ( typeof topic.local ().links , "undefined" );
         } ,
         "the links should contain the user's name as reference"               : function ( topic ) {
-            assert ( topic.local.links[0].href.indexOf ( "ionita.adri" ) >= 0 );
+            assert ( topic.local ().links[0].href.indexOf ( "ionita.adri" ) >= 0 );
         } ,
         "the link should not contain the email"                               : function ( topic ) {
-            assert ( topic.local.links[0].href.indexOf ( "ionita.adri@googlemail.com" ) < 0 );
+            assert ( topic.local ().links[0].href.indexOf ( "ionita.adri@googlemail.com" ) < 0 );
         } ,
         "the link should contain the option text"                             : function ( topic ) {
-            assert ( topic.local.links[0].text == "Koala" );
+            assert ( topic.local ().links[0].text == "Koala" );
         } ,
         "the quiz question should be queued up in the session"                : function ( topic ) {
             assert ( topic.request.session.quizQuestions.push.calledOnce );
@@ -68,7 +68,7 @@ vows.describe ( 'Generating a page for a specific player' ).addBatch ( {
             assert.equal ( quizQuestion.points['Cooala'] , - 10 );
         } ,
         "it should return the player's current score"                         : function ( subTopic ) {
-            assert.equal ( subTopic.local.score , 10 );
+            assert.equal ( subTopic.local ().score , 10 );
         }
     } ,
     "when a quiz question is already queued and the request is not json" : {
@@ -86,7 +86,7 @@ vows.describe ( 'Generating a page for a specific player' ).addBatch ( {
             return makeTest ( req , res );
         } ,
         "then it should return the first question" : function ( topic ) {
-            assert ( topic.local.imageSrc.indexOf ( "existingImage.jpg" ) >= 0 );
+            assert ( topic.local ().imageSrc.indexOf ( "existingImage.jpg" ) >= 0 );
         } ,
         "it should not generate a new question"    : function ( topic ) {
             assert ( ! topic.request.session.quizQuestions.push.called );

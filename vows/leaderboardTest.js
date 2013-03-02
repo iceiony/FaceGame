@@ -23,8 +23,8 @@ var vows = require ( 'vows' ),
     runRoute = function () {
         routeInTest.leaderboard ( reqMock , resMock );
         return {
-            viewName : resMock.render.args[0][0] ,
-            local    : resMock.render.args[0][1]
+//            viewName : function(){return resMock.render.args[0][0]} ,
+//            local    : function(){return resMock.render.args[0][1]}
         };
     };
 

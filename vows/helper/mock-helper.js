@@ -11,7 +11,16 @@ exports.mongoStub = function ( mocks ) {
             Collection : function () {
                 for ( property in mocks ) {
                     if ( mocks.hasOwnProperty ( property ) ) {
-                        stub.Collection[property] = mocks[property];
+                        stub.Collection[property] = (function ( prop ) {
+                            return function () {
+                                var args = arguments;
+                                process.nextTick ( function () {
+                                    mocks[prop].apply ( null , args );
+                                    stub.Collection[prop].args = mocks[prop].args;
+                                    stub.Collection[prop].called = mocks[prop].called;
+                                } );
+                            }
+                        } ( property ));
                     }
                 }
                 return stub.Collection;
