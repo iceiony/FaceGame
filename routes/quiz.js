@@ -65,13 +65,21 @@ var _getScore = function ( userName , callback ) {
     };
 
 exports.quiz = function ( req , res ) {
+
     if ( ! req.isJson && req.session.quizQuestions.length > 0 ) {
         _makeResponse ( req , res , req.session.quizQuestions[0] );
+        return;
     }
-    else {
-        engine.generateQuestion ( function ( err , quizQuestion ) {
-            req.session.quizQuestions.push ( quizQuestion );
-            _makeResponse ( req , res , quizQuestion );
-        } );
+
+    if ( req.isJson && req.session.quizQuestions.length > 1 ) {
+        _makeResponse ( req , res , req.session.quizQuestions[1] );
+        return;
     }
+
+    engine.generateQuestion ( function ( err , quizQuestion ) {
+        req.session.quizQuestions.push ( quizQuestion );
+        _makeResponse ( req , res , quizQuestion );
+    } );
+
+
 };

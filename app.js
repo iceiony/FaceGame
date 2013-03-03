@@ -39,6 +39,8 @@ app.configure ( function () {
     ) );
 
     app.use ( require ( './util/request-extension' ).extendRequest );
+    app.use ( require ( './util/request-extension' ).ensureSession );
+
     app.use ( app.router );
     app.use ( express.static ( path.join ( __dirname , 'public' ) ) );
 

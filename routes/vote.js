@@ -26,7 +26,7 @@ exports.vote = function ( req , res ) {
                     mongoClient.close();
                     if ( req.isJson ) {
                         res.json ( 200 , {
-                            score     : record.score + quizQuestion.points[req.params.voted] ,
+                            score     : ( record.score || 0 ) + quizQuestion.points[req.params.voted] ,
                             voteScore : quizQuestion.points[req.params.voted] ,
                             quizLink  : "/quiz/" + req.params.user
                         } )
