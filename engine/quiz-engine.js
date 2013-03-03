@@ -1,7 +1,8 @@
 var assert       = require ( 'assert' ),
-    mongoServer  = require ( '../util/settings' ).MongoServer,
+    MongoServer  = require ( 'mongodb' ).Server,
     MongoClient  = require ( 'mongodb' ).MongoClient,
-    EventEmitter = require ( 'events' ).EventEmitter;
+    EventEmitter = require ( 'events' ).EventEmitter,
+    dbSettings   = require ( '../util/settings' ).dbSettings;
 
 
 var __selectRandomDoc = function ( callback ) {
@@ -68,7 +69,7 @@ var _select3Records = function ( faceData , emitter ) {
 
 exports.generateQuestion = function ( callback ) {
     //create a new mongo connection
-    var mongoClient = new MongoClient ( mongoServer , {w : 1} );
+    var mongoClient = new MongoClient ( new MongoServer ( dbSettings.host , dbSettings.port ) , {w : 1} );
 
     //open the connection
     mongoClient.open (
