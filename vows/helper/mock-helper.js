@@ -1,14 +1,14 @@
 exports.mongoStub = function ( mocks ) {
     var property,
         stub = {
-            Db         : function () {
+            Db          : function () {
                 return {
                     open : function ( callback ) {
                         callback ( null , {} );
                     }
                 };
             } ,
-            Collection : function () {
+            Collection  : function () {
                 for ( property in mocks ) {
                     if ( mocks.hasOwnProperty ( property ) ) {
                         stub.Collection[property] = (function ( prop ) {
@@ -25,7 +25,22 @@ exports.mongoStub = function ( mocks ) {
                 }
                 return stub.Collection;
             } ,
-            Server     : function () {
+            Server      : function () {
+            } ,
+            MongoClient : function () {
+                return {
+                    open : function ( callback ) {
+                        callback ( null , {
+                            db    : function () {
+                                return  { collection : stub.Collection };
+                            } ,
+                            close : function ( callback ) {
+                                if ( typeof callback !== 'undefined' ) callback ();
+                            }} );
+
+                    }
+
+                }
             }
         };
     return stub;

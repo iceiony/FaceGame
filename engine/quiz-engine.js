@@ -1,48 +1,55 @@
-var dbSettings = require ( "../util/settings" ).dbSettings,
-    mongo = require ( 'mongodb' ),
-    assert = require ( 'assert' ),
-    EventEmitter = require ( 'events' ).EventEmitter,
+var assert       = require ( 'assert' ),
+    mongoServer  = require ( '../util/settings' ).MongoServer,
+    MongoClient  = require ( 'mongodb' ).MongoClient,
+    EventEmitter = require ( 'events' ).EventEmitter;
 
-    faceData,
-    _getRandomDocument = function ( count , callback ) {
-        var randomNr = Math.floor ( count * Math.random () );
-        faceData.findOne ( {} , {limit : - 1 , skip : randomNr} , function ( err , doc ) {
+
+var __selectRandomDoc = function ( callback ) {
+    var collection = this,
+        randomNr   = Math.floor ( collection._counted * Math.random () );
+
+    collection.findOne ( {} , {limit : - 1 , skip : randomNr} ,
+        function ( err , doc ) {
             callback ( err , doc );
         } );
-    },
-    _select3Records = function ( emitter ) {
-        return function ( count ) {
+
+};
+
+
+var _select3Records = function ( faceData , emitter ) {
+        return function () {
             var records = [],
-                names = [],
-                _recordUniqueDoc = function ( doc ) {
+                names   = [];
+
+            faceData._selectRandom (
+                function ( err , doc ) {
+                    emitter.emit ( 'document retrieved' , doc )
+                } );
+
+            emitter.on ( 'document retrieved' ,
+                function ( doc ) {
+
                     if ( names.indexOf ( doc.name ) < 0 ) {
                         records.push ( doc );
                         names.push ( doc.name );
                     }
 
                     if ( records.length < 3 ) {
-                        _getRandomDocument ( count , function ( err , doc ) {
-                            emitter.emit ( "documentRetrieved" , doc );
+                        faceData._selectRandom ( function ( err , doc ) {
+                            emitter.emit ( 'document retrieved' , doc );
                         } );
                     }
                     else {
-                        emitter.emit ( "dbDataRetrieved" , records );
+                        emitter.emit ( 'records retrieved' , records );
                     }
-                };
-
-            emitter.on ( "documentRetrieved" , _recordUniqueDoc );
-
-            _getRandomDocument ( count , function ( err , doc ) {
-                emitter.emit ( "documentRetrieved" , doc )
-            } );
-
+                } );
         };
     },
-    _makeQuizFromRecords = function ( returnCallback ) {
+    _makeQuizFromRecords = function ( emitter ) {
         return function ( records ) {
-            var randomIndex = Math.floor ( records.length * Math.random () ),
+            var randomIndex        = Math.floor ( records.length * Math.random () ),
                 randomPictureIndex = Math.floor ( records[randomIndex].pictures.length * Math.random () ),
-                quizQuestion = {
+                quizQuestion       = {
                     imageName : records[randomIndex].pictures[randomPictureIndex] ,
                     options   : [] ,
                     points    : {}
@@ -54,32 +61,43 @@ var dbSettings = require ( "../util/settings" ).dbSettings,
             } );
             quizQuestion.points[records[randomIndex].name] = 10;
 
-            returnCallback ( null , quizQuestion );
+            emitter.emit ( 'quiz created' , quizQuestion );
         }
     };
 
+
 exports.generateQuestion = function ( callback ) {
-    var _emitter = new EventEmitter ();
+    //create a new mongo connection
+    var mongoClient = new MongoClient ( mongoServer , {w : 1} );
 
-    faceData.count ( function ( err , count ) {
-        if ( count >= 3 ) {
-            _emitter.emit ( "counted" , count );
-        }
-        else {
-            process.nextTick ( function () {
-                callback ( {message : "DB has less than 3 records to generate a quiz"} , null );
-            } );
-        }
-    } );
+    //open the connection
+    mongoClient.open (
+        function ( err , mongoClient ) {
 
-    _emitter.on ( "counted" , _select3Records ( _emitter ) );
-    _emitter.on ( "dbDataRetrieved" , _makeQuizFromRecords ( callback ) );
+            var emitter = new EventEmitter (),
+                faceData = mongoClient.db ( 'FaceGame' ).collection ( 'FaceData' );
 
+            faceData.count (
+                function ( err , count ) {
+                    if ( count < 3 ) {
+                        process.nextTick (
+                            function () {
+                                callback ( {message : 'DB has less than 3 records to generate a quiz'} , null );
+                            } );
+                        return;
+                    }
+                    faceData._counted = count;
+                    faceData._selectRandom = __selectRandomDoc;
+                    emitter.emit ( 'counted' , count );
+                } );
+
+            emitter.on ( 'counted' , _select3Records ( faceData , emitter ) );
+            emitter.on ( 'records retrieved' , _makeQuizFromRecords ( emitter ) );
+
+            emitter.on ( 'quiz created' ,
+                function ( quizQuestion ) {
+                    mongoClient.close ();
+                    callback ( null , quizQuestion );
+                } );
+        } );
 };
-
-
-new mongo.Db ( "FaceGame" , new mongo.Server ( dbSettings.host , dbSettings.port ) , {w : 1} )
-    .open ( function ( error , client ) {
-    if ( error ) throw error;
-    faceData = new mongo.Collection ( client , "FaceData" );
-} );
