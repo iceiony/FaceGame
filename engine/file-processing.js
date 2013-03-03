@@ -1,86 +1,88 @@
 var path = require ( 'path' ),
     assert = require ( 'assert' ),
     fs = require ( 'fs' ),
-
-    dbSettings = require ( '../util/settings' ).dbSettings,
-    mongo = require ( 'mongodb' ),
     crypto = require ( 'crypto' ),
-    supportedExtensions = ['jpg', 'png', 'gif', 'png'],
-    faceData,
-    _extractPersonName,
-    _upsertRecord;
 
-_extractPersonName = function ( fileName ) {
-    //add space before all upper cases and then split the string
-    var fileParts = fileName.replace ( /([A-Z])/g , ' $1' ).trim ().split ( /[\s\.\-_]/g ),
-        hasImageExtension = supportedExtensions.indexOf ( fileParts[fileParts.length - 1] ) >= 0,
-        i,
-        length;
+    settings = require ( '../util/settings' ).dbSettings,
+    MongoClient = require ( 'mongodb' ).MongoClient,
+    MongoServer = require ( 'mongodb' ).Server,
 
-    if ( hasImageExtension ) {
-        fileParts.pop ();  // pop the extension off the back
-    }
+    supportedExtensions = ['jpg', 'png', 'gif'];
 
-    for ( i = 0, length = fileParts.length ; i < fileParts.length ; i += 1 ) {
-        if ( fileParts[i].length > 0 ) {
-            fileParts[i] = fileParts[i][0].toUpperCase () + fileParts[i].slice ( 1 );
-        }
-    }
-    return fileParts.join ( ' ' );
-}
+//adds spaces before all upper case letters and then splits by ['.', '_', ' ']
+var _extractPersonName = function ( fileName ) {
+        var fileParts         = fileName.replace ( /([A-Z])/g , ' $1' ).trim ().split ( /[\s\.\-_]/g ),
+            hasImageExtension = supportedExtensions.indexOf ( fileParts[fileParts.length - 1] ) >= 0;
 
-_upsertRecord = function ( personName , pictureName , callback ) {
+        if ( hasImageExtension )  fileParts.pop ();
 
-    if ( typeof faceData !== "undefined" ) {
-        faceData
-            .update (
-            {name : personName } ,
-            {$push : {pictures : pictureName}} ,
-            {upsert : true , w : 1} ,
-            function ( err , result ) {
-                assert.equal ( null , err );
-                console.log ( "Updated " + personName );
-                if ( typeof callback != "undefined" ) {
-                    process.nextTick ( callback );
+        fileParts.forEach (
+            function ( part , index ) {
+                if ( part.length > 0 ) {
+                    fileParts[index] = part[0].toUpperCase () + part.slice ( 1 );
                 }
             } );
-    }
-    else {
-        //TODO: instead of delaying , try adopting a callback pattern
-        setTimeout ( _upsertRecord ( personName , pictureName ) , 10000 ); // delay for 10 seconds to do the insert in case db connection was not made yet
-        console.log ( "delaying document upsert for (" + personName + " " + pictureName + ")" );
-    }
-}
 
-exports.processFile = function ( inputPath , callback ) {
-    var fileName = inputPath.substring ( inputPath.lastIndexOf ( path.sep ) + 1 ),
-        fileExtension = fileName.substring ( fileName.lastIndexOf ( "." ) );//extract ".jpg"
-    console.log ( "location : " + inputPath );
-    //generate a new random FileName
-    crypto.randomBytes ( 40 , function ( err , buf ) {
-        var newFileName;
+        return fileParts.join ( ' ' );
+    },
 
-        assert.equal ( null , err );
-        newFileName = buf.toString ( 'hex' ) + fileExtension;
-
-        //copy file across to the public/image folder       s
-        fs.link ( inputPath , path.join ( "./public/images/" , newFileName ) , function ( err ) {
-            assert.equal ( null , err );
-
-            //delete previous location of the file
-            fs.unlink ( inputPath , function ( err ) {
-                var personName = _extractPersonName ( fileName );
+    _upsertRecord = function ( personName , pictureName , callback ) {
+        //create single connection
+        var mongoClient = new MongoClient ( new MongoServer ( settings.host , settings.port ) , {w : 1} );
+        //open connection
+        mongoClient.open (
+            function ( err , mongoClient ) {
                 assert.equal ( null , err );
 
-                //if we have any record of the face , update the known image
-                _upsertRecord ( personName , newFileName , callback )
+                var faceData = mongoClient.db ( 'FaceGame' ).collection ( 'FaceData' );
+
+                //redefine function after connection created
+                _upsertRecord = function ( personName , pictureName , callback ) {
+                    faceData
+                        .update (
+                        {name   : personName } ,
+                        {$push  : {pictures : pictureName}} ,
+                        {upsert : true , w : 1} ,
+                        function ( err , result ) {
+                            assert.equal ( null , err );
+
+                            console.log ( "Updated " + personName );
+                            if ( typeof callback != "undefined" ) {
+                                process.nextTick ( callback );
+                            }
+                        } );
+                };
+
+                //call upsert for first invocation
+                _upsertRecord ( personName , pictureName , callback );
             } );
+    };
+
+
+exports.processFile = function ( inputPath , callback ) {
+    console.log ( "location : " + inputPath );
+
+    crypto.randomBytes ( 40 ,
+        function ( err , buf ) {
+            assert.equal ( null , err );
+
+            var fileName = inputPath.substring ( inputPath.lastIndexOf ( path.sep ) + 1 ),
+                fileExtension = fileName.substring ( fileName.lastIndexOf ( "." ) ),
+                newFileName = buf.toString ( 'hex' ) + fileExtension;
+
+            fs.link ( inputPath , path.join ( "./public/images/" , newFileName ) ,
+                function ( err ) {
+                    assert.equal ( null , err );
+
+                    fs.unlink ( inputPath , function ( err ) {
+                        assert.equal ( null , err );
+
+                        _upsertRecord (
+                            _extractPersonName ( fileName ) ,
+                            newFileName ,
+                            callback )
+                    } );
+                } );
         } );
-    } );
 };
 
-new mongo.Db ( "FaceGame" , new mongo.Server ( dbSettings.host , dbSettings.port ) , {w : 1} )
-    .open ( function ( error , client ) {
-    if ( error ) throw error;
-    faceData = new mongo.Collection ( client , "FaceData" );
-} );
