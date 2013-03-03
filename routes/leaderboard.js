@@ -2,40 +2,50 @@
  * ALL leader board
  */
 
-var assert = require ( 'assert' )        ,
-    dbSettings = require ( '../util/settings' ).dbSettings,
-    mongo = require ( 'mongodb' ),
+var assert      = require ( 'assert' )        ,
+    settings    = require ( '../util/settings' ).dbSettings,
+    MongoClient = require ( 'mongodb' ).MongoClient,
+    MongoServer = require ( 'mongodb' ).Server,
     userData;
 
 exports.leaderboard = function ( req , res ) {
-    var userList = [];
+    var mongoClient = new MongoClient ( new MongoServer ( settings.host , settings.port ) , {w : 1} ),
+        userList = [];
 
-    userData.find ( {} , {
-            "limit" : 10 ,
-            "sort"  : [
-                ['score', 'desc']
-            ] }
-        , function ( err , records ) {
-            assert.equal ( null , err );
-            records.each ( function ( err , record ) {
-                if ( record == null ) {
-                    res.render ( 'leaderboard' , {
-                        title : "FaceGame Leaderboard" ,
-                        users : userList
-                    } );
-                }
-                else {
-                    userList.push ( record );
-                }
-            } );
-        } );
+    mongoClient.open (
+        function ( err , mongoClient ) {
+            assert.equal(null,err);
+
+            var userData = mongoClient.db ( 'FaceGame' ).collection ( 'UserData' );
+
+            userData.ensureIndex ( "score" ,
+                function ( error , index ) {
+                    if ( error ) throw error;
+                } );
+
+            userData.find ( {} ,
+                {
+                    "limit" : 10 ,
+                    "sort"  : [ ['score', 'desc'] ]
+                } ,
+                function ( err , records ) {
+                    assert.equal ( null , err );
+
+                    records.each (
+                        function ( err , record ) {
+                            if ( record == null ) {
+                                mongoClient.close ();
+
+                                res.render ( 'leaderboard' , {
+                                    title : "FaceGame Leaderboard" ,
+                                    users : userList
+                                } );
+                            }
+                            else {
+                                userList.push ( record );
+                            }
+                        } );
+                } );
+        }
+    );
 };
-
-new mongo.Db ( "FaceGame" , new mongo.Server ( dbSettings.host , dbSettings.port ) , {w : 1} )
-    .open ( function ( error , client ) {
-    if ( error ) throw error;
-    userData = new mongo.Collection ( client , "UserData" );
-    userData.ensureIndex ( "score" , function ( e , index ) {
-        if ( error ) throw error;
-    } );
-} );

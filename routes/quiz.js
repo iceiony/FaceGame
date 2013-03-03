@@ -15,6 +15,8 @@ var _getScore = function ( userName , callback ) {
 
         mongoClient.open (
             function ( err , mongoClient ) {
+                assert.equal ( null , err );
+
                 var userData = mongoClient.db ( 'FaceGame' ).collection ( 'UserData' );
 
                 userData.findOne (

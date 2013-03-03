@@ -1,38 +1,39 @@
-var dbSettings = require ( '../util/settings' ).dbSettings,
-    mongo = require ( 'mongodb' ),
-    assert = require ( 'assert' ),
-    userData;
+var assert      = require ( 'assert' ),
+    settings    = require ( '../util/settings' ).dbSettings,
+    MongoClient = require ( 'mongodb' ).MongoClient,
+    MongoServer = require ( 'mongodb' ).Server;
 
 exports.vote = function ( req , res ) {
-    var quizQuestion = req.session.quizQuestions[0];
+    var quizQuestion = req.session.quizQuestions[0],
+        mongoServer  = new MongoClient ( new MongoServer ( settings.host , settings.port ) , {w : 1} );
 
     req.session.quizQuestions = req.session.quizQuestions.slice ( 1 ); //pop it off the queue
 
-    userData.findAndModify (
-        {username : req.params.user } ,
-        [] ,
-        {$inc : {score : quizQuestion.points[req.params.voted]}} ,
-        {upsert : true , w : 1} ,
-        function ( err , record ) {
+    mongoServer.open (
+        function ( err , mongoClient ) {
             assert.equal ( null , err );
 
-            if ( req.isJson ) {
-                res.json ( 200 , {
-                    score     : record.score + quizQuestion.points[req.params.voted] ,
-                    voteScore : quizQuestion.points[req.params.voted] ,
-                    quizLink  : "/quiz/" + req.params.user
-                } )
-            }
-            else {
-                res.redirect ( "/quiz/" + req.params.user );
-            }
-        } );
+            var userData = mongoClient.db ( 'FaceGame' ).collection ( 'UserData' );
+
+            userData.findAndModify (
+                {username : req.params.user } ,
+                [] ,
+                {$inc : {score : quizQuestion.points[req.params.voted]}} ,
+                {upsert : true , w : 1} ,
+                function ( err , record ) {
+                    assert.equal ( null , err );
+
+                    mongoClient.close();
+                    if ( req.isJson ) {
+                        res.json ( 200 , {
+                            score     : record.score + quizQuestion.points[req.params.voted] ,
+                            voteScore : quizQuestion.points[req.params.voted] ,
+                            quizLink  : "/quiz/" + req.params.user
+                        } )
+                    }
+                    else {
+                        res.redirect ( "/quiz/" + req.params.user );
+                    }
+                } );
+        } )
 };
-
-//initialise connection to mongo
-new mongo.Db ( "FaceGame" , new mongo.Server ( dbSettings.host , dbSettings.port ) , {w : 1} )
-    .open ( function ( error , client ) {
-        if ( error ) throw error;
-        userData = new mongo.Collection ( client , "UserData" );
-    } );
-
