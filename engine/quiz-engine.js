@@ -80,6 +80,7 @@ exports.generateQuestion = function ( callback ) {
 
             faceData.count (
                 function ( err , count ) {
+                    assert.equal(null,err);
                     if ( count < 3 ) {
                         process.nextTick (
                             function () {
