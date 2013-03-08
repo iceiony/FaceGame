@@ -2,11 +2,13 @@ extends layout
 
 block headers
     script(src='http://code.jquery.com/jquery-1.9.1.min.js')
+    script(type='text/javascript', src='/scripts/createjs-2013.02.12.min.js')
 
     script(type='text/javascript', src="/scripts/quizPreLoad.js")
 
 block content
     h1 What's-iz-name
+
     div.score
         h1(id='scoreBox') Score #{score}
     div#quizQustion
