@@ -1,5 +1,6 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
+    mockHelper = require ( './helper/mock-helper' ),
     sinon = require ( 'sinon' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
 
@@ -7,7 +8,8 @@ var vows = require ( 'vows' ),
         'child_process'     : {
             fork : sinon.stub ().returns ( {} )//return something that is not undefined
         } ,
-        './file-processing' : { processFile : sinon.spy ()} ,
+        'mongodb' : mockHelper.mongoStub ( { update : sinon.stub ().yields () } ) ,
+        './file-processing' : { processFile : sinon.spy () , setDataCollection : sinon.spy()} ,
         'fs'                : {
             readdir : sinon.stub ()
                 .yields ( null , ["readme.txt", "pic1.jpg", "pic2.bmp", "pic3.gif", "pic4.png"] )
@@ -52,6 +54,10 @@ vows.describe ( "An upload folder is watched for new files to get transferred" )
                 consoleLog : consoleLog
             };
         } ,
+
+        'it should set the dataCollection for the file processor': function (topic) {
+            assert ( dependencies['./file-processing'].setDataCollection.calledOnce);
+        }  ,
         'it should process a total of 3 images only'      : function ( topic ) {
             assert ( dependencies['./file-processing'].processFile.calledThrice );
         } ,

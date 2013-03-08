@@ -4,7 +4,12 @@ var _runAsSeparateProcess = function () {
     var assert = require ( 'assert' ),
         path   = require ( 'path' ),
         fs     = require ( 'fs' ),
-        fp     = require ( './file-processing' );
+        fp     = require ( './file-processing' ),
+
+        settings    = require ( '../util/settings' ).dbSettings,
+        MongoClient = require ( 'mongodb' ).MongoClient,
+        MongoServer = require ( 'mongodb' ).Server;
+
 
     var uploadPath     = process.env.MonitorPath,
         fileExtension  = ['jpg', 'png', 'gif'],
@@ -30,9 +35,22 @@ var _runAsSeparateProcess = function () {
                 } );
         };
 
-    peekForProcess ( uploadPath );
-    //peek for  changes every 10 minutes
-    setInterval ( peekForProcess , 60 * 10 * 1000 , uploadPath );
+
+    //initial setup ( single mongo connection )
+    var mongoClient = new MongoClient ( new MongoServer ( settings.host , settings.port ) , {w : 1} );
+
+    mongoClient.open (
+        function ( err , mongoClient ) {
+            assert.equal ( null , err );
+
+            var faceData = mongoClient.db ( 'FaceGame' ).collection ( 'FaceData' );
+
+            fp.setDataCollection(faceData);
+            peekForProcess ( uploadPath );
+            //peek for  changes every 10 minutes
+            setInterval ( peekForProcess , 60 * 10 * 1000 , uploadPath );
+
+        });
 };
 
 exports.monitor = function ( uploadPath ) {

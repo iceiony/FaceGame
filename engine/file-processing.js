@@ -3,11 +3,8 @@ var path = require ( 'path' ),
     fs = require ( 'fs' ),
     crypto = require ( 'crypto' ),
 
-    settings = require ( '../util/settings' ).dbSettings,
-    MongoClient = require ( 'mongodb' ).MongoClient,
-    MongoServer = require ( 'mongodb' ).Server,
-
-    supportedExtensions = ['jpg', 'png', 'gif'];
+    supportedExtensions = ['jpg', 'png', 'gif'],
+    faceData;
 
 //adds spaces before all upper case letters and then splits by ['.', '_', ' ']
 var _extractPersonName = function ( fileName ) {
@@ -27,37 +24,26 @@ var _extractPersonName = function ( fileName ) {
     },
 
     _upsertRecord = function ( personName , pictureName , callback ) {
-        //create single connection
-        var mongoClient = new MongoClient ( new MongoServer ( settings.host , settings.port ) , {w : 1} );
-        //open connection
-        mongoClient.open (
-            function ( err , mongoClient ) {
+
+        faceData.update (
+            {name : personName } ,
+            {$push : {pictures : pictureName}} ,
+            {upsert : true , w : 1} ,
+            function ( err , result ) {
                 assert.equal ( null , err );
 
-                var faceData = mongoClient.db ( 'FaceGame' ).collection ( 'FaceData' );
-
-                //redefine function after connection created
-                _upsertRecord = function ( personName , pictureName , callback ) {
-                    faceData
-                        .update (
-                        {name   : personName } ,
-                        {$push  : {pictures : pictureName}} ,
-                        {upsert : true , w : 1} ,
-                        function ( err , result ) {
-                            assert.equal ( null , err );
-
-                            console.log ( "Updated " + personName );
-                            if ( typeof callback != "undefined" ) {
-                                process.nextTick ( callback );
-                            }
-                        } );
-                };
-
-                //call upsert for first invocation
-                _upsertRecord ( personName , pictureName , callback );
+                console.log ( "Updated " + personName );
+                if ( typeof callback != "undefined" ) {
+                    process.nextTick ( callback );
+                }
             } );
+
     };
 
+
+exports.setDataCollection = function(dataCollection){
+    faceData = dataCollection;
+}
 
 exports.processFile = function ( inputPath , callback ) {
     console.log ( "location : " + inputPath );

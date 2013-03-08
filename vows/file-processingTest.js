@@ -21,6 +21,7 @@ var vows = require ( 'vows' ),
 
 //subject in test
 utils = proxyquire ( '../engine/file-processing' , dependencies );
+utils.setDataCollection(dependencies.mongodb.Collection());
 
 vows.describe ( 'processing a file located in the input folder' ).addBatch ( {
     'when an image for a new person is processed for upload' : {
