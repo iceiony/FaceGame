@@ -50,7 +50,7 @@ Game.nameSpace ( "Game.PreLoad" );
                                     $ ( 'ul' ).replaceWith ( nextQuestion.ul );
                                     that.overrideLinkAction ();
 
-                                    that.scoreBox.text ( "Score " + res.score );
+                                    that.scoreBox.text ( "Score " + res.score , res.voteScore );
                                     that.quizQuestions = that.quizQuestions.splice ( 1 );
                                     that.loadNextQuestion ( res.quizLink );
                                 }

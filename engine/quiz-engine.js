@@ -58,7 +58,7 @@ var _select3Records = function ( faceData , emitter ) {
 
             records.forEach ( function ( record ) {
                 quizQuestion.options.push ( record.name );
-                quizQuestion.points[record.name] = - 5;
+                quizQuestion.points[record.name] = - 10;
             } );
             quizQuestion.points[records[randomIndex].name] = 10;
 

@@ -6,12 +6,18 @@ block headers
     script(type='text/javascript', src='/scripts/external/createjs-2013.02.12.min.js')
 
     script(type='text/javascript', src="/scripts/game.js")
+    script(type='text/javascript', src='/scripts/animate.js')
+
     script(type='text/javascript')
         //initialize
         (function () {
             $ ( document ).ready ( function () {
-                var preLoad = new Game.PreLoad ( $('#scoreBox') );
-                    preLoad.overrideLinkAction ();
+                var animate = new Game.Animate ( 'scoreCanvas' ),
+                    preLoad = animate.isCanvasSupported ?
+                                new Game.PreLoad ( animate ) :
+                                new Game.PreLoad ( $('#scoreBox') );
+
+                preLoad.overrideLinkAction ();
                 preLoad.loadNextQuestion ( window.location.toString () );
             } );
         } ());
@@ -19,9 +25,9 @@ block headers
 block content
     h1(style='margin-bottom:0px') What's-iz-name
 
-
-    div.score
-        h1(id='scoreBox') Score #{score}
+    canvas#scoreCanvas(height='89',width='233')
+        div.score
+            h1(id='scoreBox') Score #{score}
     div#quizQustion
         div.leftContainer
             img(src="#{imageSrc}")
