@@ -6,23 +6,36 @@ Game.nameSpace ( "Game.Animate" );
 
 
     var _moveParticles = function ( animate ) {
-        var firstPositive = 0;
+            var firstPositive = 0;
 
-        _.each ( animate.particles ,
-            function ( element , index ) {
+            _.each ( animate.particles ,
+                function ( element , index ) {
 
-                if ( element.y > - 10 ) {
-                    element.y -= element.speed;
-                    if ( firstPositive < 0 ) firstPositive = index;
+                    if ( element.y > - 10 ) {
+                        element.y -= element.speed;
+                        if ( firstPositive < 0 ) firstPositive = index;
 
-                    return;
-                }
+                        return;
+                    }
 
-                animate.stage.removeChild ( element );
-            } );
+                    animate.stage.removeChild ( element );
+                } );
 
-        animate.particles = animate.particles.splice ( firstPositive );
-    };
+            animate.particles = animate.particles.splice ( firstPositive );
+        },
+        _blinkText = function ( animate ) {
+            var blinkCount = 10,
+                interval = setInterval ( function () {
+                    blinkCount --;
+
+                    animate.score.color = animate.score.color === POSITIVE_COLOR ? NEGATIVE_COLOR : POSITIVE_COLOR;
+
+                    if ( ! blinkCount ) {
+                        clearInterval ( interval );
+                        animate.score.color = animate.score.text.indexOf ( '-' ) < 0 ? POSITIVE_COLOR : NEGATIVE_COLOR;
+                    }
+                } , 1000 / 5 );
+        }
 
 
     Game.Animate = function ( canvasId ) {
@@ -53,12 +66,12 @@ Game.nameSpace ( "Game.Animate" );
     };
 
 
-    Game.Animate.prototype.text = function ( text , value ) {
+    Game.Animate.prototype.text = function ( text , lastValue ) {
         var that = this,
             particle = new createjs.Text ( '' );
 
         this.score.text = text;
-        if ( value > 0 ) {
+        if ( lastValue > 0 ) {
             particle.text = '+';
             particle.color = POSITIVE_COLOR;
             particle.font = 'bold 2em Arial';
@@ -69,7 +82,7 @@ Game.nameSpace ( "Game.Animate" );
             particle.font = 'bold 2em Arial';
         }
 
-        _.each ( _.range ( Math.abs ( value ) * 2 ) ,
+        _.each ( _.range ( Math.abs ( lastValue ) * 2 ) ,
             function ( ordinal ) {
                 var clone = particle.clone ();
 
@@ -86,18 +99,10 @@ Game.nameSpace ( "Game.Animate" );
             }
         );
 
+        that.score.color = that.score.text.indexOf ( '-' ) < 0 ? POSITIVE_COLOR : NEGATIVE_COLOR;
         //blink text
-        var blinkCount = 5,
-            interval = setInterval ( function () {
-                blinkCount --;
+        if ( lastValue < 0 ) _blinkText ( this );
 
-                that.score.color = that.score.color === POSITIVE_COLOR ? NEGATIVE_COLOR : POSITIVE_COLOR;
-
-                if ( ! blinkCount ) {
-                    clearInterval ( interval );
-                    that.score.color = that.score.text.indexOf ( '-' ) < 0 ? POSITIVE_COLOR : NEGATIVE_COLOR;
-                }
-            } , 1000 / 5 );
     };
 
     Game.Animate.prototype.isCanvasSupported = (function () {
