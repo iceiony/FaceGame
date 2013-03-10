@@ -1,11 +1,11 @@
-var assert      = require ( 'assert' ),
-    settings    = require ( '../util/settings' ).dbSettings,
+var assert = require ( 'assert' ),
+    settings = require ( '../util/settings' ).dbSettings,
     MongoClient = require ( 'mongodb' ).MongoClient,
     MongoServer = require ( 'mongodb' ).Server;
 
 exports.vote = function ( req , res ) {
     var quizQuestion = req.session.quizQuestions[0],
-        mongoServer  = new MongoClient ( new MongoServer ( settings.host , settings.port ) , {w : 1} );
+        mongoServer = new MongoClient ( new MongoServer ( settings.host , settings.port ) , {w : 1} );
 
     req.session.quizQuestions = req.session.quizQuestions.slice ( 1 ); //pop it off the queue
 
@@ -21,9 +21,15 @@ exports.vote = function ( req , res ) {
                 {$inc : {score : quizQuestion.points[req.params.voted]}} ,
                 {upsert : true , w : 1} ,
                 function ( err , record ) {
-                    assert.equal ( null , err );
+                    if ( err != null ) {
+                        console.log ( err );
+                        res.json ( 500 , {
+                            redirect : "/quiz/" + req.params.user
+                        } );
+                        return;
+                    }
 
-                    mongoClient.close();
+                    mongoClient.close ();
                     if ( req.isJson ) {
                         res.json ( 200 , {
                             score     : ( record.score || 0 ) + quizQuestion.points[req.params.voted] ,

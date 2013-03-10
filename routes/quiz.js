@@ -67,12 +67,14 @@ var _getScore = function ( userName , callback ) {
 exports.quiz = function ( req , res ) {
 
     if ( ! req.isJson && req.session.quizQuestions.length > 0 ) {
+        req.session.clientSideCount = 1;
         _makeResponse ( req , res , req.session.quizQuestions[0] );
         return;
     }
 
-    if ( req.isJson && req.session.quizQuestions.length > 1 ) {
-        _makeResponse ( req , res , req.session.quizQuestions[1] );
+    if ( req.isJson && req.session.quizQuestions.length > req.session.clientSideCount ) {
+        req.session.clientSideCount += 1;
+        _makeResponse ( req , res , req.session.quizQuestions[req.session.clientSideCount - 1 ] );
         return;
     }
 

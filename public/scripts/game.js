@@ -40,11 +40,11 @@ Game.nameSpace ( "Game.PreLoad" );
                                 url      : event.target.href ,
                                 dataType : 'json' ,
 
-                                complete : function ( validationResponse ) {
-                                    var res = JSON.parse ( validationResponse.responseText ),
+                                complete : function ( scoreResponse ) {
+                                    var res = JSON.parse ( scoreResponse.responseText ),
                                         nextQuestion = that.quizQuestions[0];
 
-                                    console.log ( validationResponse.responseText );
+                                    console.log ( scoreResponse.responseText );
 
                                     $ ( 'img' ).replaceWith ( nextQuestion.img );
                                     $ ( 'ul' ).replaceWith ( nextQuestion.ul );
@@ -72,8 +72,8 @@ Game.nameSpace ( "Game.PreLoad" );
                 url      : quizUrl ,
                 dataType : 'json' ,
 
-                complete : function ( validationResponse ) {
-                    var newQuiz = JSON.parse ( validationResponse.responseText ),
+                complete : function ( nextQuiz ) {
+                    var newQuiz = JSON.parse ( nextQuiz.responseText ),
                         image = $ ( "<img/>" , {src : newQuiz.imageSrc} ),
                         optionList = $ ( "<ul/>" );
 
