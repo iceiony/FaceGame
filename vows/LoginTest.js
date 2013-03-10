@@ -35,9 +35,6 @@ vows.describe ( 'Generating a page for a specific player' ).addBatch ( {
         'the redirect to the quiz page of that user'        : function ( topic ) {
             assert ( resMock.redirect.called );
             assert ( resMock.redirect.args[0][0].indexOf ( "quiz/ionita.adri" ) > 0 );
-        } ,
-        'the session quizQuestions queue should be created' : function ( topic ) {
-            assert ( reqMock.session.quizQuestions );
         }
     }
 } ).export ( module ); // Run it
