@@ -1,6 +1,6 @@
-var vows = require ( 'vows' ),
-    assert = require ( 'assert' ),
-    sinon = require ( 'sinon' ),
+var vows       = require ( 'vows' ),
+    assert     = require ( 'assert' ),
+    sinon      = require ( 'sinon' ),
     mockHelper = require ( './helper/mock-helper' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
 
@@ -87,6 +87,19 @@ vows.describe ( 'Voting in the quiz' ).addBatch ( {
         } ,
         'the response should contain the link to generate the next quiz' : function ( topic ) {
             assert.strictEqual ( resMock.json.args[0][1].quizLink , "/quiz/ionita.adri" );
+        }
+    }
+} ).addBatch ( {
+    "When there is no question to vote for" : {
+        topic                                : function () {
+            reqMock.isJson = true;
+            reqMock.session.quizQuestions = [  ];
+            resMock.redirect.reset ();
+            resMock.json = sinon.spy ();
+            return runRoute ();
+        } ,
+        'a redirect should no longer happen' : function ( topic ) {
+            assert ( resMock.redirect.called );
         }
     }
 } ).export ( module );
