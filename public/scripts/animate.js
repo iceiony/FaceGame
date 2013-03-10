@@ -42,7 +42,7 @@ Game.nameSpace ( "Game.Animate" );
                     "font-weight : bold;" +
                     "z-index : -1;" +
                     "font-size : 2em;" +
-                    "left : " + (event.clientX + 21 ) + "px;" +
+                    "left : " + (event.clientX + 34 ) + "px;" +
                     "top : " + event.clientY + "px;" +
                     "color : " + ( voteScore > 0 ? POSITIVE_COLOR : NEGATIVE_COLOR) ,
                 text  : (voteScore < 0 ? '-' : '+') + Math.abs ( voteScore )
