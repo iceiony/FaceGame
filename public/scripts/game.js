@@ -50,7 +50,7 @@ Game.nameSpace ( "Game.PreLoad" );
                                     $ ( 'ul' ).replaceWith ( nextQuestion.ul );
                                     that.overrideLinkAction ();
 
-                                    that.scoreBox.text ( "Score " + res.score , res.voteScore );
+                                    that.scoreBox.text ( "Score " + res.score , res.voteScore , event );
                                     that.quizQuestions = that.quizQuestions.splice ( 1 );
                                     that.loadNextQuestion ( res.quizLink );
                                 }
@@ -80,8 +80,8 @@ Game.nameSpace ( "Game.PreLoad" );
                     _.each ( newQuiz.links , function ( element ) {
                             var option = $ ( '<li/>' ),
                                 link = $ ( '<a/>' , {
-                                    href : encodeURI ( "http://" + document.location.host + element.href )   ,
-                                    text : element.text
+                                    href  : encodeURI ( "http://" + document.location.host + element.href ) ,
+                                    text  : element.text
                                 } );
 
                             link.appendTo ( option );

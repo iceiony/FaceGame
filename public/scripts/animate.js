@@ -35,7 +35,29 @@ Game.nameSpace ( "Game.Animate" );
                         animate.score.color = animate.score.text.indexOf ( '-' ) < 0 ? POSITIVE_COLOR : NEGATIVE_COLOR;
                     }
                 } , 1000 / 5 );
-        }
+        },
+        _voteBuble = function ( voteScore , event ) {
+            var bubble = $ ( '<div/>' , {
+                style : "position : absolute;" +
+                    "font-weight : bold;" +
+                    "z-index : -1;" +
+                    "font-size : 2em;" +
+                    "left : " + (event.clientX + 21 ) + "px;" +
+                    "top : " + event.clientY + "px;" +
+                    "color : " + ( voteScore > 0 ? POSITIVE_COLOR : NEGATIVE_COLOR) ,
+                text  : (voteScore < 0 ? '-' : '+') + Math.abs ( voteScore )
+            } );
+
+            $ ( 'body' ).append ( bubble );
+            bubble.animate ( {
+                    opacity : .3 ,
+                    top     : '-=89'
+                } ,
+                3000 ,
+                function () {
+                    bubble.remove ();
+                } );
+        };
 
 
     Game.Animate = function ( canvasId ) {
@@ -66,20 +88,18 @@ Game.nameSpace ( "Game.Animate" );
     };
 
 
-    Game.Animate.prototype.text = function ( text , lastValue ) {
+    Game.Animate.prototype.text = function ( text , lastValue , clickEvent ) {
         var that = this,
-            particle = new createjs.Text ( '' );
+            particle = new createjs.Text ( '' , 'bold 2em Arial' );
 
         this.score.text = text;
         if ( lastValue > 0 ) {
             particle.text = '+';
             particle.color = POSITIVE_COLOR;
-            particle.font = 'bold 2em Arial';
         }
         else {
             particle.text = '-';
             particle.color = NEGATIVE_COLOR;
-            particle.font = 'bold 2em Arial';
         }
 
         _.each ( _.range ( Math.abs ( lastValue ) * 2 ) ,
@@ -99,10 +119,12 @@ Game.nameSpace ( "Game.Animate" );
             }
         );
 
-        that.score.color = that.score.text.indexOf ( '-' ) < 0 ? POSITIVE_COLOR : NEGATIVE_COLOR;
         //blink text
+        that.score.color = that.score.text.indexOf ( '-' ) < 0 ? POSITIVE_COLOR : NEGATIVE_COLOR;
         if ( lastValue < 0 ) _blinkText ( this );
 
+        //voteScore bubble next to mouse
+        _voteBuble ( lastValue , clickEvent );
     };
 
     Game.Animate.prototype.isCanvasSupported = (function () {

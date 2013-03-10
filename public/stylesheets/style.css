@@ -8,6 +8,7 @@ body {
    /*1 1 2 3 5 8 13 21 34 55 */
 a {
   color: #00B7FF;
+  z-index: 2;
 }
 
 div.leftContainer {
