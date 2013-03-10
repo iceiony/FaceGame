@@ -28,12 +28,33 @@ Game.nameSpace ( "Game.PreLoad" );
         this.quizQuestions = [];
     };
 
+    Game.PreLoad.prototype.showNext = function () {
+        $ ( 'img' ).replaceWith ( this.quizQuestions[0].img );
+        $ ( 'ul' ).replaceWith ( this.quizQuestions[0].ul );
+        this.quizQuestions = this.quizQuestions.splice ( 1 );
+        this.overrideLinkAction ();
+    }
+
     Game.PreLoad.prototype.overrideLinkAction = function () {
         var that = this;
 
         $ ( 'a' ).each ( function ( index , element ) {
                 $ ( element ).click (
                     function ( event ) {
+
+                        $ ( element ).unbind ( 'click' );
+                        $ ( element ).bind ( 'click' , false );
+
+                        //load next question ( if we have one )
+                        if ( that.quizQuestions[0] ) {
+                            that.showNext ();
+                        }
+                        else {
+                            that.isQuestionHungry = true;
+                        }
+
+
+                        //make vote
                         $.ajax (
                             {
                                 type     : 'GET' ,
@@ -41,17 +62,9 @@ Game.nameSpace ( "Game.PreLoad" );
                                 dataType : 'json' ,
 
                                 complete : function ( scoreResponse ) {
-                                    var res = JSON.parse ( scoreResponse.responseText ),
-                                        nextQuestion = that.quizQuestions[0];
-
-                                    console.log ( scoreResponse.responseText );
-
-                                    $ ( 'img' ).replaceWith ( nextQuestion.img );
-                                    $ ( 'ul' ).replaceWith ( nextQuestion.ul );
-                                    that.overrideLinkAction ();
+                                    var res = JSON.parse ( scoreResponse.responseText );
 
                                     that.scoreBox.text ( "Score " + res.score , res.voteScore , event );
-                                    that.quizQuestions = that.quizQuestions.splice ( 1 );
                                     that.loadNextQuestion ( res.quizLink );
                                 }
                             }
@@ -80,8 +93,8 @@ Game.nameSpace ( "Game.PreLoad" );
                     _.each ( newQuiz.links , function ( element ) {
                             var option = $ ( '<li/>' ),
                                 link = $ ( '<a/>' , {
-                                    href  : encodeURI ( "http://" + document.location.host + element.href ) ,
-                                    text  : element.text
+                                    href : encodeURI ( "http://" + document.location.host + element.href ) ,
+                                    text : element.text
                                 } );
 
                             link.appendTo ( option );
@@ -90,6 +103,10 @@ Game.nameSpace ( "Game.PreLoad" );
                     );
 
                     that.quizQuestions.push ( {img : image , ul : optionList} );
+                    if ( that.isQuestionHungry ) {
+                        that.isQuestionHungry = false;
+                        that.showNext ();
+                    }
                 }
             }
         );
