@@ -17,7 +17,7 @@ block headers
                                 new Game.PreLoad ( animate ) :
                                 new Game.PreLoad ( $('#scoreBox') );
 
-                preLoad.overrideLinkAction ();
+                preLoad.overrideLinkAction ($ ( 'a' ));
                 //preload 2 questions
                 preLoad.loadNextQuestion ( window.location.toString () );
                 preLoad.loadNextQuestion ( window.location.toString () );
