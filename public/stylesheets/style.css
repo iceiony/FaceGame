@@ -1,3 +1,4 @@
+/*general*/
 html{ margin:0; padding:0; height:100%; width:100%; }
 
 body {
@@ -5,7 +6,9 @@ body {
     font-family:sans-serif;
 }
 
+
    /*1 1 2 3 5 8 13 21 34 55 */
+/*quiz page*/
 a {
   color: #00B7FF;
   z-index: 2;
@@ -47,3 +50,41 @@ ul {
     list-style-type: lower-latin;
 
 }
+
+/*leaderboard page*/
+h1.leaderboard{
+    margin-bottom: 0px;
+}
+
+img.shield{
+    height:36px;
+    margin-left:8px;
+}
+
+span.info{
+    margin-left:5px;
+    color:grey;
+    font-size:medium;
+}
+
+table.leaderboard{
+    width:55%;
+    text-align:left;
+    margin-left:1em;
+    font-size:2em;
+    padding-top:21px;
+}
+
+table.leaderboard tr {
+    padding-bottom: 1em;
+}
+table.leaderboard tr th{
+    padding-bottom:8px
+}
+
+table.leaderboard tr td.user{
+    color: #00B7FF;
+    padding-top:3px;
+}
+
+

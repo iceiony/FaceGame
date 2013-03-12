@@ -1,14 +1,16 @@
 extends layout
 
 block content
-    h1 Top Scorers
+    h1(class='leaderboard') Top Knowers
+        img(class='shield',src='/images/DragonShield.jpg')
+    span(class='info') ( of all time )
     
-    table
+    table(class='leaderboard')
         tr
             th User
             th Score
         
         each user in users
             tr
-                td=user.username
-                td=user.score
+                td(class='user')=user.username
+                td(class='score')=user.score
