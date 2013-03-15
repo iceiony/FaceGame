@@ -83,7 +83,7 @@ Game.nameSpace ( "Game.Animate" );
         } );
 
         //counts as internal clock, different from FPS ticks
-        setInterval ( _moveParticles , 1000 / 60 , this );
+        setInterval ( function(){_moveParticles(that);} , 1000 / 60  );
 
     };
 

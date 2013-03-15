@@ -33,6 +33,9 @@ Game.nameSpace ( "Game.PreLoad" );
 
     Game.PreLoad.prototype.showNext = function () {
         $ ( 'ul' ).replaceWith ( this.quizQuestions[0].ul );
+        //jquery in IE adding with and height attribtues
+        this.quizQuestions[0].img.removeAttr('width');
+        this.quizQuestions[0].img.removeAttr('height');
         $ ( 'img' ).replaceWith ( this.quizQuestions[0].img );
         this.quizQuestions = this.quizQuestions.splice ( 1 );
     }

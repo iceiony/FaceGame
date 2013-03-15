@@ -26,7 +26,9 @@ app.configure ( function () {
     app.set ( 'views' , __dirname + '/views' );
     app.set ( 'view engine' , 'jade' );
 
+    app.use ( express.static ( path.join ( __dirname , 'public' ) ) );
     app.use ( express.favicon ( __dirname + '/public/images/favicon.ico' ) );
+
     app.use ( express.logger ( 'dev' ) );
     app.use ( express.bodyParser () );
     app.use ( express.methodOverride () );
@@ -40,9 +42,9 @@ app.configure ( function () {
 
     app.use ( require ( './util/request-extension' ).extendRequest );
     app.use ( require ( './util/request-extension' ).ensureSession );
-
+    app.use ( require ( './util/request-extension' ).noCache );
     app.use ( app.router );
-    app.use ( express.static ( path.join ( __dirname , 'public' ) ) );
+
 
 } );
 

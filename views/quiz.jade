@@ -5,8 +5,8 @@ block headers
     script(type='text/javascript', src='/scripts/external/underscore-min-1.4.4.js')
     script(type='text/javascript', src='/scripts/external/createjs-2013.02.12.min.js')
 
-    script(type='text/javascript', src="/scripts/game.js")
-    script(type='text/javascript', src='/scripts/animate.js')
+    script(type='text/javascript', src="/scripts/game.js?v=1")
+    script(type='text/javascript', src='/scripts/animate.js?v=2')
 
     script(type='text/javascript')
         //initialize
@@ -29,6 +29,7 @@ block content
     canvas#scoreCanvas(height='89',width='233')
         div.score
             h1(id='scoreBox') Score #{score}
+
     div#quizQustion
         div.leftContainer
             img(src="#{imageSrc}")
