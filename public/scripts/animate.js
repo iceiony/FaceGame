@@ -127,7 +127,7 @@ Game.nameSpace ( "Game.Animate" );
         _voteBuble ( lastValue , clickEvent );
     };
 
-    Game.Animate.prototype.isCanvasSupported = (function () {
+    Game.Animate.isCanvasSupported = (function () {
         var elem = document.createElement ( 'canvas' );
         return ! ! (elem.getContext && elem.getContext ( '2d' ));
     } ());

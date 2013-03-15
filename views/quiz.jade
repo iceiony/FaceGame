@@ -6,15 +6,14 @@ block headers
     script(type='text/javascript', src='/scripts/external/createjs-2013.02.12.min.js')
 
     script(type='text/javascript', src="/scripts/game.js?v=1")
-    script(type='text/javascript', src='/scripts/animate.js?v=2')
+    script(type='text/javascript', src='/scripts/animate.js?v=3')
 
     script(type='text/javascript')
         //initialize
         (function () {
             $ ( document ).ready ( function () {
-                var animate = new Game.Animate ( 'scoreCanvas' ),
-                    preLoad = animate.isCanvasSupported ?
-                                new Game.PreLoad ( animate ) :
+                var preLoad = Game.Animate.isCanvasSupported ?
+                                new Game.PreLoad ( new Game.Animate ( 'scoreCanvas' ) ) :
                                 new Game.PreLoad ( $('#scoreBox') );
 
                 preLoad.overrideLinkAction ($ ( 'a' ));
