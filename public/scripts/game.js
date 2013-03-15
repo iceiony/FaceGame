@@ -29,7 +29,27 @@ Game.nameSpace ( "Game.PreLoad" );
         this.minQuestions = 2;
 
         this.pendingQuestionLoad = 0;
+
+        // fix splice for < IE9
+        if (document.documentMode && document.documentMode < 9) {
+            var originalSplice = Array.prototype.splice;
+            Array.prototype.splice = function() {
+                var arr = [],
+                    i = 0,
+                    max = arguments.length;
+
+                for (; i < max; i++){
+                    arr.push(arguments[i]);
+                }
+                if (arr.length==1) {
+                    arr.push(this.length - arr[0]);
+                }
+                return originalSplice.apply(this, arr);
+            };
+        }
     };
+
+
 
     Game.PreLoad.prototype.showNext = function () {
         $ ( 'ul' ).replaceWith ( this.quizQuestions[0].ul );
