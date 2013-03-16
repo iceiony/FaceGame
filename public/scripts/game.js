@@ -81,11 +81,11 @@ Game.nameSpace ( "Game.PreLoad" );
                         $.ajax (
                             {
                                 type     : 'GET' ,
-                                url      : event.target.href ,
+                                url      : $(event.target ).attr('href') ,
                                 dataType : 'json' ,
 
                                 complete : function ( scoreResponse ) {
-                                    var res = JSON.parse ( scoreResponse.responseText );
+                                    var res = $.parseJSON ( scoreResponse.responseText );
 
                                     that.scoreBox.text ( "Score " + res.score , res.voteScore , event );
                                     that.loadNextQuestions ( res.quizLink );
@@ -117,7 +117,7 @@ Game.nameSpace ( "Game.PreLoad" );
                 dataType : 'json' ,
 
                 complete : function ( nextQuiz ) {
-                    var newQuiz = JSON.parse ( nextQuiz.responseText ),
+                    var newQuiz = $.parseJSON ( nextQuiz.responseText ),
                         image = $ ( "<img/>" , {src : newQuiz.imageSrc} ),
                         optionList = $ ( "<ul/>" ),
                         links = [];
