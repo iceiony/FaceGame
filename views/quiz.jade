@@ -12,9 +12,7 @@ block headers
         //initialize
         (function () {
             $ ( document ).ready ( function () {
-                var preLoad = Game.Animate.isCanvasSupported ?
-                                new Game.PreLoad ( new Game.Animate ( 'scoreCanvas' ) ) :
-                                new Game.PreLoad ( $('#scoreBox') );
+                var preLoad = new Game.PreLoad ( new Game.Animate ( 'scoreCanvas' , 'scoreBox' ) ) ;
 
                 preLoad.overrideLinkAction ($ ( 'a' ));
                 //preload 2 questions
