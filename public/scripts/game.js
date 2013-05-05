@@ -52,12 +52,14 @@ Game.nameSpace ( "Game.PreLoad" );
 
 
     Game.PreLoad.prototype.showNext = function () {
-        $ ( 'ul' ).replaceWith ( this.quizQuestions[0].ul );
-        //jquery in IE adding with and height attribtues
-        this.quizQuestions[0].img.removeAttr('width');
-        this.quizQuestions[0].img.removeAttr('height');
-        $ ( 'img' ).replaceWith ( this.quizQuestions[0].img );
+        var question = this.quizQuestions[0];
+        
         this.quizQuestions = this.quizQuestions.splice ( 1 );
+        $ ( 'ul' ).replaceWith ( question.ul );
+        //jquery in IE adding with and height attribtues
+        question.img.removeAttr('width');
+        question.img.removeAttr('height');
+        $ ( 'img' ).replaceWith ( question.img );
     }
 
     Game.PreLoad.prototype.overrideLinkAction = function ( links ) {
@@ -113,7 +115,7 @@ Game.nameSpace ( "Game.PreLoad" );
         $.ajax (
             {
                 type     : 'GET' ,
-                url      : quizUrl ,
+                url      : (quizUrl+'?nounce='+Math.random()) ,
                 dataType : 'json' ,
 
                 complete : function ( nextQuiz ) {
