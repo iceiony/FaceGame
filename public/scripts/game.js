@@ -52,9 +52,8 @@ Game.nameSpace ( "Game.PreLoad" );
 
 
     Game.PreLoad.prototype.showNext = function () {
-        var question = this.quizQuestions[0];
-        
-        this.quizQuestions = this.quizQuestions.splice ( 1 );
+      var question = this.quizQuestions[0];
+	      this.quizQuestions = this.quizQuestions.splice ( 1 );
         $ ( 'ul' ).replaceWith ( question.ul );
         //jquery in IE adding with and height attribtues
         question.img.removeAttr('width');
@@ -114,9 +113,10 @@ Game.nameSpace ( "Game.PreLoad" );
 
         $.ajax (
             {
-                type     : 'GET' ,
-                url      : (quizUrl+'?nounce='+Math.random()) ,
+                type     : 'POST' ,
+                url      : quizUrl ,
                 dataType : 'json' ,
+		data     : {"nounce":Math.random()},
 
                 complete : function ( nextQuiz ) {
                     var newQuiz = $.parseJSON ( nextQuiz.responseText ),
