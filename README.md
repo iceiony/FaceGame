@@ -18,3 +18,4 @@ Roadmap (future features)
 4. Data correlation and Analitics: how many people know me, how many people do I know  ? 
 5. Rolling leader board : only show your relative score to peolpe around , not a full fledged leaderboard
 6. View info on peolpe you didn't guess correctly : up to 10 peolpe rolling queue . 
+7. Daily quiz by email for peole that registered 
