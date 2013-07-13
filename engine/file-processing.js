@@ -34,7 +34,7 @@ var _extractPersonName = function ( fileName ) {
 
                 console.log ( "Updated " + personName );
                 if ( typeof callback != "undefined" ) {
-                    process.nextTick ( callback );
+                    setImmediate ( callback );
                 }
             } );
 

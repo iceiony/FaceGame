@@ -82,7 +82,7 @@ exports.generateQuestion = function ( callback ) {
                 function ( err , count ) {
                     assert.equal(null,err);
                     if ( count < 3 ) {
-                        process.nextTick (
+                        setImmediate (
                             function () {
                                 callback ( {message : 'DB has less than 3 records to generate a quiz'} , null );
                             } );
