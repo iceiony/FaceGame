@@ -25,7 +25,7 @@ var vows       = require ( 'vows' ),
 vows.describe ( 'Voting in the quiz' ).addBatch ( {
     'When a user clicks on a vote link for a quiz' : {
         topic                                                          : function () {
-            dependencies['../engine/voting'].vote.yields(null, { score: 11, newPoints: 1 }) ;
+            dependencies['../engine/voting'].vote.yields(null, { score: 11, voteScore: 1 }) ;
             return runRoute ();
         } ,
         'the voting module is invoked'                                 : function ( topic ) {
@@ -43,7 +43,7 @@ vows.describe ( 'Voting in the quiz' ).addBatch ( {
             reqMock.isJson = true;
             resMock.redirect.reset ();
             resMock.json = sinon.spy ();
-            dependencies['../engine/voting'].vote.yields(null, { score: 10, newPoints: 1 }) ;
+            dependencies['../engine/voting'].vote.yields(null, { score: 11, voteScore: 1 }) ;
             return runRoute ();
         } ,
         'a redirect should no longer happen'                             : function ( topic ) {
