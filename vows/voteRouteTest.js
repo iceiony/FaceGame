@@ -1,29 +1,16 @@
 var vows       = require ( 'vows' ),
     assert     = require ( 'assert' ),
     sinon      = require ( 'sinon' ),
-    mockHelper = require ( './helper/mock-helper' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
 
     dependencies = {
-        'mongodb'          : mockHelper.mongoStub ( {findAndModify : sinon.stub ().yields ( null , {score : 10} )} ) ,
-        '../util/settings' : {dbSettings : sinon.mock ()}
+        '../engine/voting': { vote: sinon.stub()}
     },
-    routeInTest = proxyquire ( '../routes/vote' , dependencies ),  //the mock is for MongoServer
+    routeInTest = proxyquire ( '../routes/vote' , dependencies ),
 
     reqMock = {
         headers : {} ,
-        session : {
-            quizQuestions : [
-                {
-                    options : ['a', 'b', 'c'] ,
-                    points  : {'a' : 1 , 'b' : 2 , 'c' : 0}
-                },
-                {
-                    options : ['x', 'y', 'z'] ,
-                    points  : {'x' : 1 , 'y' : 2 , 'z' : 0}
-                }
-            ]
-        } ,
+        session : {   },
         params  : {user : "ionita.adri" , voted : 'a'}
     },
     resMock = { redirect : sinon.stub () },
@@ -37,40 +24,26 @@ var vows       = require ( 'vows' ),
 
 vows.describe ( 'Voting in the quiz' ).addBatch ( {
     'When a user clicks on a vote link for a quiz' : {
-        topic                                         : function () {
+        topic                                                          : function () {
+            dependencies['../engine/voting'].vote.yields(null, { score: 11, newPoints: 1 }) ;
             return runRoute ();
         } ,
-        'a quiz is removed from the queue of quizzes' : function ( topic ) {
-            assert.equal ( reqMock.session.quizQuestions.length , 1 );
-            assert.strictEqual ( reqMock.session.quizQuestions[0].options[0] , 'x' , 'The wrong question was removed from queue' );
+        'the voting module is invoked'                                 : function ( topic ) {
+             assert( dependencies['../engine/voting'].vote.called);
         } ,
 
         "the user is redirected to the quiz page with the user's name" : function ( topic ) {
             assert ( resMock.redirect.called );
             assert.strictEqual ( resMock.redirect.args[0][0] , "/quiz/ionita.adri" );
-        } ,
-
-        "the user's score is upserted in the db" : function ( topic ) {
-            var mongoUpdate = dependencies.mongodb.Collection.findAndModify,
-                parameters = mongoUpdate.args[0];
-
-            assert ( mongoUpdate.called );
-            assert.strictEqual ( parameters[0].username , "ionita.adri" );
-            assert ( parameters[3].upsert );
         }
     }
 } ).addBatch ( {
     "When the request is a json one" : {
         topic                                                            : function () {
             reqMock.isJson = true;
-            reqMock.session.quizQuestions = [
-                {
-                    options : ['a', 'b', 'c'] ,
-                    points  : {'a' : 1 , 'b' : 2 , 'c' : 0}
-                }
-            ];
             resMock.redirect.reset ();
             resMock.json = sinon.spy ();
+            dependencies['../engine/voting'].vote.yields(null, { score: 10, newPoints: 1 }) ;
             return runRoute ();
         } ,
         'a redirect should no longer happen'                             : function ( topic ) {
@@ -92,13 +65,14 @@ vows.describe ( 'Voting in the quiz' ).addBatch ( {
 } ).addBatch ( {
     "When there is no question to vote for" : {
         topic                                : function () {
-            reqMock.isJson = true;
-            reqMock.session.quizQuestions = [  ];
+            reqMock.isJson = false;
             resMock.redirect.reset ();
             resMock.json = sinon.spy ();
+            console.log = sinon.spy();
+            dependencies['../engine/voting'].vote.yield({message:"No existing quiz to vote against"},null);
             return runRoute ();
         } ,
-        'a redirect should no longer happen' : function ( topic ) {
+        'the request should be redirected' : function ( topic ) {
             assert ( resMock.redirect.called );
         }
     }

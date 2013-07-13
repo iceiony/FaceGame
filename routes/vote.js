@@ -1,50 +1,31 @@
 var assert      = require ( 'assert' ),
-    settings    = require ( '../util/settings' ).dbSettings,
-    MongoClient = require ( 'mongodb' ).MongoClient,
-    MongoServer = require ( 'mongodb' ).Server;
+    voting      = require  ( '../engine/voting');
 
-exports.vote = function ( req , res ) {
-    var quizQuestion = req.session.quizQuestions[0],
-        mongoServer = new MongoClient ( new MongoServer ( settings.host , settings.port ) , {w : 1} );
+exports.vote = function (req, res) {
 
-    if ( quizQuestion ) {
-        req.session.quizQuestions = req.session.quizQuestions.slice ( 1 ); //pop it off the queue
+    voting.vote(req.params.user, req.session, req.params.voted,
+        function (err, result) {
+            if (err != null) {
+                console.log(err);
 
-        mongoServer.open (
-            function ( err , mongoClient ) {
-                assert.equal ( null , err );
+                if (req.isJson) {
+                    res.json(500, {
+                        redirect: "/quiz/" + req.params.user
+                    });
+                }
+                else res.redirect("/quiz/" + req.params.user);
 
-                var userData = mongoClient.db ( 'FaceGame' ).collection ( 'UserData' );
+                return;
+            }
 
-                userData.findAndModify (
-                    {username : req.params.user } ,
-                    [] ,
-                    {$inc : {score : quizQuestion.points[req.params.voted]}} ,
-                    {upsert : true , w : 1} ,
-                    function ( err , record ) {
-                        if ( err != null ) {
-                            console.log ( err );
-                            res.json ( 500 , {
-                                redirect : "/quiz/" + req.params.user
-                            } );
-                            return;
-                        }
+            if (req.isJson) {
+                res.json(200, {
+                    score: ( result.score || 0 ),
+                    voteScore: result.voteScore,
+                    quizLink: "/quiz/" + req.params.user
+                })
+            }
+            else res.redirect("/quiz/" + req.params.user);
 
-                        mongoClient.close ();
-                        if ( req.isJson ) {
-                            res.json ( 200 , {
-                                score     : ( record.score || 0 ) + quizQuestion.points[req.params.voted] ,
-                                voteScore : quizQuestion.points[req.params.voted] ,
-                                quizLink  : "/quiz/" + req.params.user
-                            } )
-                        }
-                        else {
-                            res.redirect ( "/quiz/" + req.params.user );
-                        }
-                    } );
-            } );
-    }
-    else {
-        res.redirect ( "/quiz/" + req.params.user );
-    }
+        });
 };
