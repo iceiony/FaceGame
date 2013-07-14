@@ -2,7 +2,7 @@ var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
     sinon = require ( 'sinon' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
-    mockHelper = require ( './helper/mock-helper' );
+    mockHelper = require ( '././mock-helper' );
 
 
 vows.describe ( "Generating a quiz " ).addBatch ( {

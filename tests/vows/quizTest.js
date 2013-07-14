@@ -2,7 +2,7 @@ var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
     sinon = require ( 'sinon' ),
-    mockHelper = require ( './helper/mock-helper' ),
+    mockHelper = require ( '././mock-helper' ),
 
     dependencies = {
         'mongodb'               : mockHelper.mongoStub ( {findOne : sinon.stub ().yields ( null , {score : 10} )} ) ,

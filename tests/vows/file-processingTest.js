@@ -1,6 +1,6 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
-    mockHelper = require ( './helper/mock-helper' ),
+    mockHelper = require ( '././mock-helper' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
     path = require ( 'path' ) ,
     sinon = require ( 'sinon' ),
