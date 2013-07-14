@@ -1,5 +1,5 @@
 {
-  "name": "FaceGame",
+  "name": "face-game",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,10 +8,11 @@
   "dependencies": {
     "express": "3.0.4",
     "jade": "*",
-	"mongodb": "*",
+    "mongodb": "*",
     "connect-mongo": "*",
     "vows": "*",
     "proxyquire": "*",
-    "sinon": "*"
+    "sinon": "*",
+    "mocha": "~1.12.0"
   }
 }
