@@ -10,6 +10,7 @@ var express = require ( 'express' )
 
     , mongo = require ( 'mongodb' )
     , routes = {
+        index       : require ('./routes/index').index,
         login       : require ( './routes/login' ).login ,
         quiz        : require ( './routes/quiz' ).quiz ,
         vote        : require ( './routes/vote' ).vote ,
@@ -52,7 +53,8 @@ app.configure ( 'development' , function () {
     app.use ( express.errorHandler () );
 } );
 
-app.all ( '/' , routes.login );
+app.all ( '/' , routes.index);
+app.all ( '/login' , routes.login );
 app.all ( '/quiz/:user' , routes.quiz );
 app.all ( '/user/:user/vote/:voted' , routes.vote );
 app.all ( '/leaderboard' , routes.leaderboard );
