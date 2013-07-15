@@ -5,7 +5,7 @@ var assert      = require ( 'assert' ),
 
 exports.vote = function (user, data, vote, callback) {
     var quizQuestion = data.quizQuestions[0],
-        mongoServer = new MongoClient(new MongoServer(settings.host, settings.port), {w: 1});
+        isAnonymous = ( user.indexOf('anonymous') == 0 );
 
     if (!quizQuestion) {
         callback({
@@ -16,6 +16,8 @@ exports.vote = function (user, data, vote, callback) {
 
     data.quizQuestions = data.quizQuestions.slice(1); //pop it off the queue
 
+    if(!isAnonymous){
+    var mongoServer = new MongoClient(new MongoServer(settings.host, settings.port), {w: 1});
     mongoServer.open(
         function (err, mongoClient) {
             assert.equal(null, err);
@@ -35,5 +37,10 @@ exports.vote = function (user, data, vote, callback) {
                 }
             );
         });
-
+    }
+    else{
+        data.totalScore =  data.totalScore || 0;
+        data.totalScore += quizQuestion.points[vote];
+        callback(null,{score : data.totalScore, voteScore: quizQuestion.points[vote] });
+    }
 }
