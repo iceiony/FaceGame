@@ -1,6 +1,6 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
-    mockHelper = require ( '././mock-helper' ),
+    mockHelper = require ( '../helper/mock-helper' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
     path = require ( 'path' ) ,
     sinon = require ( 'sinon' ),
@@ -16,11 +16,11 @@ var vows = require ( 'vows' ),
             }
         }
     },
-    fakePath = path.join ( "../input/bruce-willis.jpg" ),
+    fakePath = path.join ( "../../input/bruce-willis.jpg" ),
     restoreConsole = console.log;
 
 //subject in test
-utils = proxyquire ( '../engine/file-processing' , dependencies );
+utils = proxyquire ( '../../engine/file-processing' , dependencies );
 utils.setDataCollection(dependencies.mongodb.Collection());
 
 vows.describe ( 'processing a file located in the input folder' ).addBatch ( {

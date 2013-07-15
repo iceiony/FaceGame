@@ -2,7 +2,7 @@ var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
     sinon = require ( 'sinon' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
-    mockHelper = require ( '././mock-helper' );
+    mockHelper = require ( '../helper/mock-helper' );
 
 
 vows.describe ( "Generating a quiz " ).addBatch ( {
@@ -17,7 +17,7 @@ vows.describe ( "Generating a quiz " ).addBatch ( {
                         count   : sinon.stub ().yields ( null , 1 )
                     } )
                 },
-                subject = proxyquire ( '../engine/quiz-engine' , dependencies );
+                subject = proxyquire ( '../../engine/quiz-engine' , dependencies );
 
             subject.generateQuestion ( this.callback );
         } ,
@@ -41,7 +41,7 @@ vows.describe ( "Generating a quiz " ).addBatch ( {
                         count   : sinon.stub ().yields ( null , 10 )
                     } )
                 },
-                subject = proxyquire ( '../engine/quiz-engine' , dependencies );
+                subject = proxyquire ( '../../engine/quiz-engine' , dependencies );
 
             subject.generateQuestion ( this.callback );
         } ,

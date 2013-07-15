@@ -1,6 +1,6 @@
 var vows    = require ( 'vows' ),
     assert  = require ( 'assert' ),
-    subject = require ( '../util/request-extension' ).extendRequest,
+    subject = require ( '../../util/request-extension' ).extendRequest,
     reqJson = {};
 reqNonJson = {};
 

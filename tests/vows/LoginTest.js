@@ -1,6 +1,6 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
-    routeInTest = require ( '../routes/login' ),
+    routeInTest = require ( '../../routes/login' ),
     sinon = require ( 'sinon' ),
 
     resMock = { render : sinon.stub () , redirect : sinon.stub () },

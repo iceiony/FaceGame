@@ -1,14 +1,14 @@
 var vows       = require ( 'vows' ),
     assert     = require ( 'assert' ),
     sinon      = require ( 'sinon' ),
-    mockHelper = require ( '././mock-helper' ),
+    mockHelper = require ( '../helper/mock-helper' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
 
     dependencies = {
         'mongodb'          : mockHelper.mongoStub ( {findAndModify : sinon.stub ().yields ( null , {score : 10} )} ) ,
         '../util/settings' : {dbSettings : sinon.mock ()}
     },
-    voting = proxyquire ( '../engine/voting' , dependencies ),
+    voting = proxyquire ( '../../engine/voting' , dependencies ),
 
     data = {
         quizQuestions: [

@@ -1,6 +1,6 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
-    mockHelper = require ( '././mock-helper' ),
+    mockHelper = require ( '../helper/mock-helper' ),
     sinon = require ( 'sinon' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
 
@@ -20,7 +20,7 @@ vows.describe ( "An upload folder is watched for new files to get transferred" )
     .addBatch ( {
     'When creating an instance of the folder-watch' : {
         topic                                         : function () {
-            var folderWatch = proxyquire ( '../engine/folder-watch' , dependencies );
+            var folderWatch = proxyquire ( '../../engine/folder-watch' , dependencies );
             return {
                 result : folderWatch.monitor ( "./input" )
             }
@@ -46,8 +46,8 @@ vows.describe ( "An upload folder is watched for new files to get transferred" )
             console.log = sinon.spy ();
 
             process.env.IsChildProcess = true;
-            process.env.MonitorPath = "../input";
-            var folderWatch = proxyquire ( '../engine/folder-watch' , dependencies );
+            process.env.MonitorPath = "./input";
+            var folderWatch = proxyquire ( '../../engine/folder-watch' , dependencies );
 
             return {
                 clock      : clock ,

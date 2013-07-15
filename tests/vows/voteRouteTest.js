@@ -6,7 +6,7 @@ var vows       = require ( 'vows' ),
     dependencies = {
         '../engine/voting': { vote: sinon.stub()}
     },
-    routeInTest = proxyquire ( '../routes/vote' , dependencies ),
+    routeInTest = proxyquire ( '../../routes/vote' , dependencies ),
 
     reqMock = {
         headers : {} ,

@@ -2,7 +2,7 @@ var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
     sinon = require ( 'sinon' ),
-    mockHelper = require ( '././mock-helper' ),
+    mockHelper = require ( '../helper/mock-helper' ),
 
     dependencies = {
         'mongodb'               : mockHelper.mongoStub ( {findOne : sinon.stub ().yields ( null , {score : 10} )} ) ,
@@ -16,7 +16,7 @@ var vows = require ( 'vows' ),
         } ,
         '../util/settings'      : {dbSettings : {host : 'localhost' , port : 27017}}
     }
-routeInTest = proxyquire ( '../routes/quiz' , dependencies )
+routeInTest = proxyquire ( '../../routes/quiz' , dependencies )
 
 makeTest = function ( req , res ) {
     routeInTest.quiz ( req , res );

@@ -1,7 +1,7 @@
 var vows = require ( 'vows' ),
     assert = require ( 'assert' ),
     sinon = require ( 'sinon' ),
-    mockHelper = require ( '././mock-helper' ),
+    mockHelper = require ( '../helper/mock-helper' ),
     proxyquire = require ( 'proxyquire' ).noCallThru (),
 
     dependencies = {
@@ -15,7 +15,7 @@ var vows = require ( 'vows' ),
             ensureIndex : sinon.stub ().yields ( null , "index" )
         } )
     },
-    routeInTest = proxyquire ( '../routes/leaderboard' , dependencies ),  //the mock is for MongoServer
+    routeInTest = proxyquire ( '../../routes/leaderboard' , dependencies ),  //the mock is for MongoServer
 
     resMock = { render : sinon.stub () },
     reqMock = {body : {} , session : {} },
