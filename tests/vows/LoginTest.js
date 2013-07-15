@@ -5,10 +5,10 @@ var vows = require ( 'vows' ),
 
     resMock = { render : sinon.stub () , redirect : sinon.stub () },
     reqMock = {body : {} , session : {} },
-    next = sinon.stub (),
+
 
     makeTest = function () {
-        routeInTest.login ( reqMock , resMock , next );
+        routeInTest.login ( reqMock , resMock  );
         return {
             viewName : resMock.render.args[0][0] ,
             local    : resMock.render.args[0][1]
