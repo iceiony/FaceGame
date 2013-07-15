@@ -43,8 +43,8 @@ exports.vote = function (user, data, vote, callback) {
         _persistNewScore(user,quizQuestion.points[vote],callback);
     }
     else{
-        data.totalScore =  data.totalScore || 0;
-        data.totalScore += quizQuestion.points[vote];
-        callback(null,{score : data.totalScore, voteScore: quizQuestion.points[vote] });
+        data.currentScore =  data.currentScore || 0;
+        data.currentScore += quizQuestion.points[vote];
+        callback(null,{score : data.currentScore, voteScore: quizQuestion.points[vote] });
     }
 }

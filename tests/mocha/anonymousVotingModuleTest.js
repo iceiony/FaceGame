@@ -29,7 +29,7 @@ describe('Anonymous user voting',function(){
     });
 
     describe("When an user with name prefixed by 'anonymous' votes for a quiz and has score",function(){
-        var data = {quizQuestions:[{options: ['a', 'b', 'c'],points: {'a': 1, 'b': 2, 'c': 0}}], totalScore : 10},
+        var data = {quizQuestions:[{options: ['a', 'b', 'c'],points: {'a': 1, 'b': 2, 'c': 0}}], currentScore : 10},
             callback      = sinon.stub(),
             result        = subject.vote('anonymous.123',data,'a',callback);
 
