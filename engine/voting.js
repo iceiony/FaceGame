@@ -3,6 +3,29 @@ var assert      = require ( 'assert' ),
     MongoClient = require ( 'mongodb' ).MongoClient,
     MongoServer = require ( 'mongodb' ).Server;
 
+var _persistNewScore = function(user,voteScore,callback){
+    var mongoServer = new MongoClient(new MongoServer(settings.host, settings.port), {w: 1});
+    mongoServer.open(
+        function (err, mongoClient) {
+            assert.equal(null, err);
+
+            var userData = mongoClient.db('FaceGame').collection('UserData');
+
+            userData.findAndModify(
+                {username: user },
+                [],
+                {$inc: {score: voteScore}},
+                {upsert: true, w: 1},
+                function (err, result) {
+                    mongoClient.close();
+                    result.voteScore = voteScore;
+                    result.score += voteScore;
+                    callback(err, result);
+                }
+            );
+        });
+};
+
 exports.vote = function (user, data, vote, callback) {
     var quizQuestion = data.quizQuestions[0],
         isAnonymous = ( user.indexOf('anonymous') == 0 );
@@ -17,26 +40,7 @@ exports.vote = function (user, data, vote, callback) {
     data.quizQuestions = data.quizQuestions.slice(1); //pop it off the queue
 
     if(!isAnonymous){
-    var mongoServer = new MongoClient(new MongoServer(settings.host, settings.port), {w: 1});
-    mongoServer.open(
-        function (err, mongoClient) {
-            assert.equal(null, err);
-
-            var userData = mongoClient.db('FaceGame').collection('UserData');
-
-            userData.findAndModify(
-                {username: user },
-                [],
-                {$inc: {score: quizQuestion.points[vote]}},
-                {upsert: true, w: 1},
-                function (err, result) {
-                    mongoClient.close();
-                    result.voteScore = quizQuestion.points[vote];
-                    result.score += quizQuestion.points[vote];
-                    callback(err, result);
-                }
-            );
-        });
+        _persistNewScore(user,quizQuestion.points[vote],callback);
     }
     else{
         data.totalScore =  data.totalScore || 0;
