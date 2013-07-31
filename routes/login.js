@@ -4,27 +4,23 @@ var assert      = require ( 'assert' ),
     MongoClient = require ( 'mongodb' ).MongoClient,
     MongoServer = require ( 'mongodb' ).Server;
 
-
-
-
-
-var  _badEmailResponse = function(req,res){
-    if( req.isJson )
-        res.json({isSuccess:false,Error:"Not an email"})
+var _badEmailResponse = function (req, res) {
+    if (req.isJson)
+        res.json({isSuccess: false, Error: "Not an email"})
     else
-        res.render ( 'login' , {title : "FaceGame Login"} );
+        res.render('login', {title: "FaceGame Login"});
 };
 
-exports.login = function ( req , res ) {
+exports.login = function (req, res) {
     var userEmail = req.body.email,
         password = req.body.password,
         userName;
 
-    if ( typeof userEmail === 'undefined' || userEmail.length <= 0 ) {
-        _badEmailResponse(req,res);
+    if (typeof userEmail === 'undefined' || userEmail.length <= 0) {
+        _badEmailResponse(req, res);
     }
     else {
-        userName = userEmail.substring ( 0 , userEmail.indexOf ( "@" ) );
+        userName = userEmail.substring(0, userEmail.indexOf("@"));
 
         var mongoServer = new MongoClient(new MongoServer(settings.host, settings.port), {w: 1});
         mongoServer.open(
@@ -34,19 +30,18 @@ exports.login = function ( req , res ) {
                 var userData = mongoClient.db('FaceGame').collection('UserData');
 
                 userData.findOne(
-                    { username: userName , password: password },
+                    { username: userName, password: password },
                     function (err, result) {
                         mongoClient.close();
 
                         if (result) {
                             var currentScore = req.session.currentScore;
 
-                            voting.updateScore(userName,currentScore,function(){});
+                            voting.updateScore(userName, currentScore, function () {
+                            });
 
                             req.session.loginName = userName;
                             req.session.currentScore = 0;
-
-
 
                             if (req.isJson) {
                                 res.json({
@@ -58,11 +53,11 @@ exports.login = function ( req , res ) {
                             else res.redirect("/quiz/" + userName + "/");
                         }
                         else {
-                            delete req.session.loginName ;
-                            if(req.isJson){
+                            delete req.session.loginName;
+                            if (req.isJson) {
                                 res.json({
                                     isSuccess: false,
-                                    Error : "Bad email or password"
+                                    Error: "Bad email or password"
                                 })
                             }
                             else res.redirect("/login/");

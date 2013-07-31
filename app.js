@@ -12,6 +12,7 @@ var express = require ( 'express' )
     , routes = {
         index       : require ('./routes/index').index,
         login       : require ( './routes/login' ).login ,
+        register       : require ( './routes/register' ).register ,
         quiz        : require ( './routes/quiz' ).quiz ,
         vote        : require ( './routes/vote' ).vote ,
         leaderboard : require ( './routes/leaderboard' ).leaderboard
@@ -55,6 +56,7 @@ app.configure ( 'development' , function () {
 
 app.all ( '/' , routes.index);
 app.all ( '/login' , routes.login );
+app.all ( '/register' , routes.register );
 app.all ( '/quiz/:user' , routes.quiz );
 app.all ( '/user/:user/vote/:voted' , routes.vote );
 app.all ( '/leaderboard' , routes.leaderboard );
