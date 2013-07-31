@@ -1,7 +1,9 @@
 var assert      = require ( 'assert' ),
+    voting      = require ( '../engine/voting'),
     settings    = require ( '../util/settings' ).dbSettings,
     MongoClient = require ( 'mongodb' ).MongoClient,
     MongoServer = require ( 'mongodb' ).Server;
+
 
 
 
@@ -38,8 +40,13 @@ exports.login = function ( req , res ) {
 
                         if (result) {
                             var currentScore = req.session.currentScore;
+
+                            voting.updateScore(userName,currentScore,function(){});
+
                             req.session.loginName = userName;
                             req.session.currentScore = 0;
+
+
 
                             if (req.isJson) {
                                 res.json({

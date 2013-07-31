@@ -3,7 +3,7 @@ var assert      = require ( 'assert' ),
     MongoClient = require ( 'mongodb' ).MongoClient,
     MongoServer = require ( 'mongodb' ).Server;
 
-var _persistNewScore = function(user,voteScore,callback){
+var _updateScore = function(user,voteScore,callback){
     var mongoServer = new MongoClient(new MongoServer(settings.host, settings.port), {w: 1});
     mongoServer.open(
         function (err, mongoClient) {
@@ -26,6 +26,8 @@ var _persistNewScore = function(user,voteScore,callback){
         });
 };
 
+exports.updateScore = _updateScore;
+
 exports.vote = function (user, data, vote, callback) {
     var quizQuestion = data.quizQuestions[0],
         isAnonymous = ( user.indexOf('anonymous') == 0 );
@@ -40,7 +42,7 @@ exports.vote = function (user, data, vote, callback) {
     data.quizQuestions = data.quizQuestions.slice(1); //pop it off the queue
 
     if(!isAnonymous){
-        _persistNewScore(user,quizQuestion.points[vote],callback);
+        _updateScore(user,quizQuestion.points[vote],callback);
     }
     else{
         data.currentScore =  data.currentScore || 0;

@@ -4,7 +4,8 @@ var assert       = require('assert'),
     mockHelper   = require ( '../helper/mock-helper' ),
     dependencies = {
         'mongodb': mockHelper.mongoStub ( {findOne : sinon.stub ().yields ( null , {score : 10} )} ),
-        '../util/settings' : {dbSettings : sinon.mock ()}
+        '../util/settings' : {dbSettings : sinon.mock ()},
+        '../engine/voting' : {updateScore : sinon.mock ()}
     };
 
 describe("Quiz page ajax request to login anoymous user",function(){
@@ -29,6 +30,9 @@ describe("Quiz page ajax request to login anoymous user",function(){
         });
         it("should set the currentScore property on the session to 0",function(){
             assert.equal( req.session.currentScore , 0 );
+        });
+        it("should update the score in the db with the anonymous value",function(){
+            assert(dependencies['../engine/voting'].updateScore.called);
         });
     });
     describe("When an anonymous user decides to login from a quiz page and the password is incorrect",function(){
