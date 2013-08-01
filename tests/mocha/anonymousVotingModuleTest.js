@@ -9,8 +9,6 @@ var assert          = require('assert'),
 describe('Anonymous user voting',function(){
     var subject       = proxyquire('../../engine/voting',dependencies);
 
-
-
     describe("When an user with name prefixed by 'anonymous' votes for a quiz and has no score",function(){
         var fakeQuestions = [{options: ['a', 'b', 'c'],points: {'a': 1, 'b': 2, 'c': 0}}],
             callback      = sinon.stub(),
