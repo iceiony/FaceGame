@@ -11,6 +11,9 @@ var _badEmailResponse = function (req, res) {
         res.render('login', {title: "FaceGame Login"});
 };
 
+
+exports.badEmailResponse = _badEmailResponse;
+
 exports.login = function (req, res) {
     var userEmail = req.body.email,
         password = req.body.password,
