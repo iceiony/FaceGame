@@ -30,11 +30,11 @@ exports.leaderboard = function ( req , res ) {
                 } ,
                 function ( err , records ) {
                     assert.equal ( null , err );
+                    mongoClient.close();
 
                     records.each (
                         function ( err , record ) {
                             if ( record == null ) {
-                                mongoClient.close ();
 
                                 res.render ( 'leaderboard' , {
                                     title : "FaceGame Leaderboard" ,

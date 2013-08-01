@@ -35,6 +35,8 @@ exports.register = function (req, res) {
                             });
                     }
                     else {
+                        mongoClient.close();
+
                         if (req.isJson)
                             res.json({isSuccess: false, message: "Email already registered, try logging in."});
                         else
