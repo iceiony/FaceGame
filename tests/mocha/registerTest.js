@@ -1,22 +1,21 @@
 var assert = require('assert'),
     sinon = require('sinon'),
     proxyquire = require('proxyquire'),
-    mockHelper = require('../helper/mock-helper'),
-    dependencies = {
-        '../util/settings': {dbSettings: sinon.mock()},
-        './login': {login: sinon.mock()}
-    };
+    mockHelper = require('../helper/mock-helper');
 
 
 describe('Request to register anonymous user : ', function () {
 
     describe('When an anonymous attempts to register an account with an un-existing email', function () {
-        dependencies.mongodb = mockHelper.mongoStub({
-            insert: sinon.stub().yields(null, {}),
-            findOne: sinon.stub().yields(null, null)
-        });
-
-        var subject = proxyquire('../../routes/register', dependencies),
+        var dependencies = {
+                mongodb: mockHelper.mongoStub({
+                    insert: sinon.stub().yields(null, {}),
+                    findOne: sinon.stub().yields(null, null)
+                }),
+                '../util/settings': {dbSettings: sinon.mock()},
+                './login': {login: sinon.mock()}
+            },
+            subject = proxyquire('../../routes/register', dependencies),
             req = {isJson: true, body: { email: "broni@facegame.co.uk", password: "pony16" }, params: { anonymousUser: "anonymous.3117"}, session: {currentScore: 10} },
             res = {json: sinon.stub()};
 
@@ -32,11 +31,12 @@ describe('Request to register anonymous user : ', function () {
     });
 
     describe("When an anonymous user attempts to register an account with an existing email", function () {
-        dependencies.mongodb = mockHelper.mongoStub({
-            findOne: sinon.stub().yields(null, {score: 10})
-        });
-
-        var subject = proxyquire('../../routes/register', dependencies),
+        var dependencies = {
+                mongodb: mockHelper.mongoStub({findOne: sinon.stub().yields(null, {score: 10})}),
+                '../util/settings': {dbSettings: sinon.mock()},
+                './login': {login: sinon.mock()}
+            },
+            subject = proxyquire('../../routes/register', dependencies),
             req = {isJson: true, body: { email: "broni@facegame.co.uk", password: "pony16" }, params: { anonymousUser: "anonymous.3117"}, session: {currentScore: 10} },
             res = {json: sinon.stub()};
 
