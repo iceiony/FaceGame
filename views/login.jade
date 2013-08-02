@@ -3,7 +3,10 @@ extends layout
 block content
   h1 The facegame
   form(action='/login',method='post')
-      |Email
+      |Email &nbsp;
       input(type='text',name='email')
+      br
+      |Password &nbsp;
       input(type='password',name='password')
+      br
       input(type='submit',value='LogIn')
