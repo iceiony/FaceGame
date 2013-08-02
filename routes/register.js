@@ -4,13 +4,20 @@ var assert      = require ( 'assert' ),
     MongoClient = require ( 'mongodb' ).MongoClient,
     MongoServer = require ( 'mongodb' ).Server;
 
+var _badEmailResponse = function (req, res) {
+    if (req.isJson)
+        res.json({isSuccess: false, Error: "Not an email"})
+    else
+        res.render('register', {title: "FaceGame SignUp"});
+};
+
 exports.register = function (req, res) {
     var userEmail = req.body.email,
         password = req.body.password,
         userName;
 
     if (typeof userEmail === 'undefined' || userEmail.length <= 0) {
-        login.badEmailResponse(req, res);
+        _badEmailResponse(req, res);
     }
     else {
         userName = userEmail.substring(0, userEmail.indexOf("@"));
