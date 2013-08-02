@@ -8,7 +8,7 @@ var path = require ( 'path' ),
 
 //adds spaces before all upper case letters and then splits by ['.', '_', ' ']
 var _extractPersonName = function ( fileName ) {
-        var fileParts         = fileName.replace ( /([A-Z])/g , ' $1' ).trim ().split ( /[\s\.\-_]/g ),
+        var fileParts         = fileName.replace('%20',' ').replace ( /([A-Z])/g , ' $1' ).trim ().split ( /[\s\.\-_]/g ),
             hasImageExtension = supportedExtensions.indexOf ( fileParts[fileParts.length - 1] ) >= 0;
 
         if ( hasImageExtension )  fileParts.pop ();
