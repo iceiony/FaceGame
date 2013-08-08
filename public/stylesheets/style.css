@@ -87,4 +87,12 @@ table.leaderboard tr td.user{
     padding-top:3px;
 }
 
+form div {
+    width:21em;
+    position:relative;
+}
 
+form div input {
+    position:absolute;
+    right:0px;
+}

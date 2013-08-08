@@ -4,13 +4,14 @@ block content
   h1 The facegame Login
   form(action='/login',method='post')
       div
-          |Email
+          span
+            |Email
           input(type='text',name='email')
       div
           |Password &nbsp;
           input(type='password',name='password')
-      div
+      span
           input(type='submit',value='LogIn')
 
-  p Not yet a member? Register
+  p Not yet a member? Register &nbsp;
       a(href='/register') here

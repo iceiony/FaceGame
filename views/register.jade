@@ -3,10 +3,12 @@ extends layout
 block content
   h1 The facegame Registration
   form(action='/register',method='post')
-      |Email &nbsp;
-      input(type='text',name='email')
-      br
-      |Password &nbsp;
-      input(type='password',name='password')
-      br
+    div
+        span
+            | Email
+        input(type='text',name='email')
+    div
+        | Password &nbsp;
+        input(type='password',name='password')
+    span
       input(type='submit',value='Register')
