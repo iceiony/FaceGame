@@ -6,13 +6,13 @@
     "start": "node app"
   },
   "dependencies": {
-    "jade": "*",
-    "mongodb": "*",
     "connect-mongo": "*",
-    "vows": "*",
+    "express": "^3.3.8",
+    "jade": "*",
+    "mocha": "^1.12.1",
+    "mongodb": "*",
     "proxyquire": "*",
     "sinon": "*",
-    "mocha": "~1.12.0",
-    "express": "~3.3.4"
+    "vows": "*"
   }
 }
