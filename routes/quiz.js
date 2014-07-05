@@ -47,7 +47,8 @@ var _getScore = function ( userName , callback ) {
         if ( req.isJson ) {
             res.json ( 200 , {
                 links    : userLinks,
-                imageSrc : "/images/" + quizQuestion.imageName
+                imageSrc : "/images/" + quizQuestion.imageName,
+                preLoadLink : "/quiz/" + req.params.user
             } )
         }
         else {
