@@ -37,9 +37,7 @@ exports.leaderboard = function ( req , res ) {
                                 mongoClient.close();
                                 
                                 if(req.isJson){
-                                    res.json(200,{
-                                       userList : userList 
-                                    })
+                                    res.json(200,userList)
                                 }
                                 else
                                     res.render ( 'leaderboard' , {
