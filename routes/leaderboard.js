@@ -35,10 +35,18 @@ exports.leaderboard = function ( req , res ) {
                         function ( err , record ) {
                             if ( record == null ) {
                                 mongoClient.close();
-                                res.render ( 'leaderboard' , {
-                                    title : "FaceGame Leaderboard" ,
-                                    users : userList
-                                } );
+                                
+                                if(req.isJson){
+                                    res.json(200,{
+                                       userList : userList 
+                                    })
+                                }
+                                else
+                                    res.render ( 'leaderboard' , {
+                                        title : "FaceGame Leaderboard" ,
+                                        users : userList
+                                    } );
+
                             }
                             else {
                                 userList.push ( record );
