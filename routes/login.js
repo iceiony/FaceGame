@@ -35,7 +35,7 @@ exports.login = function (req, res) {
                         mongoClient.close();
 
                         if (result) {
-                            var currentScore = req.session.currentScore;
+                            var currentScore = req.session.currentScore || 0;
 
                             voting.updateScore(userName, currentScore, function () {
                             });
@@ -47,7 +47,8 @@ exports.login = function (req, res) {
                                 res.json({
                                     isSuccess: true,
                                     score: result.score,
-                                    voteScore: currentScore
+                                    voteScore: currentScore,
+                                    quizLink : "/quiz/" + userName + "/"
                                 })
                             }
                             else res.redirect("/quiz/" + userName + "/");
